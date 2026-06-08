@@ -1,0 +1,2906 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Smartlog Transportation Diagnostic - Tối Ưu Vận Tải Số</title>
+<meta name="description" content="Đo lường năng lực số hóa vận tải, định vị điểm nghẽn vận hành và khám phá cơ hội tối ưu chi phí cùng Smartlog.">
+
+<!-- Google Fonts: Be Vietnam Pro only -->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,400;1,700&display=swap" rel="stylesheet">
+
+<style>
+/* ============================================================
+   DESIGN SYSTEM, TOKENS & BRAND SPECIFICATION
+   ============================================================ */
+:root {
+  /* Brand Guidelines: Strict #3543f6 & White Palette */
+  --primary: #3543f6;
+  --primary-hover: #1b28d4;
+  --primary-light: #eff2ff;
+  --primary-soft: rgba(53, 67, 246, 0.06);
+  --primary-glow: rgba(53, 67, 246, 0.12);
+  
+  --neutral-dark: #0f172a;
+  --neutral-muted: #475569;
+  --neutral-light: #94a3b8;
+  
+  --bg-main: #f8fafc;
+  --bg-card: #ffffff;
+  --border-color: #e2e8f0;
+  --border-glow: #a5b4fc;
+  
+  /* Semantic highlights for dynamic tier results only */
+  --success: #10b981;
+  --success-light: #ecfdf5;
+  --warning: #f59e0b;
+  --warning-light: #fffbeb;
+  --danger: #ef4444;
+  
+  /* Compact & Premium Spacing */
+  --radius-xs: 6px;
+  --radius-sm: 10px;
+  --radius-md: 16px;
+  --radius-lg: 24px;
+  --radius-full: 9999px;
+  
+  --shadow-sm: 0 2px 8px rgba(53, 67, 246, 0.02);
+  --shadow-md: 0 10px 24px rgba(53, 67, 246, 0.04);
+  --shadow-lg: 0 20px 48px rgba(53, 67, 246, 0.08);
+  
+  --transition-fast: 0.15s ease;
+  --transition-smooth: 0.3s cubic-bezier(0.25, 1, 0.5, 1);
+  --transition-bounce: 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+/* ============================================================
+   RESET & GLOBAL STYLE
+   ============================================================ */
+*, *::before, *::after {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
+  font-size: 15px; /* Downsized root size for tighter layouts */
+}
+
+body {
+  font-family: 'Be Vietnam Pro', sans-serif;
+  color: var(--neutral-dark);
+  background-color: var(--bg-main);
+  overflow-x: hidden;
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* Scrollbar styling */
+::-webkit-scrollbar {
+  width: 8px;
+}
+::-webkit-scrollbar-track {
+  background: var(--bg-main);
+}
+::-webkit-scrollbar-thumb {
+  background: #cbd5e1;
+  border-radius: var(--radius-full);
+  border: 2px solid var(--bg-main);
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #94a3b8;
+}
+
+/* ============================================================
+   BACKGROUND GRAPHICS CANVAS
+   ============================================================ */
+.bg-canvas {
+  position: fixed;
+  inset: 0;
+  z-index: -2;
+  overflow: hidden;
+  pointer-events: none;
+}
+
+.bg-dot-grid {
+  position: absolute;
+  inset: 0;
+  background-image: radial-gradient(rgba(53, 67, 246, 0.035) 1.2px, transparent 1.2px);
+  background-size: 24px 24px;
+  mask-image: radial-gradient(circle at center, black 40%, transparent 95%);
+}
+
+.bg-glow-sphere {
+  position: absolute;
+  border-radius: 50%;
+  filter: blur(100px);
+  opacity: 0.4;
+  mix-blend-mode: multiply;
+  animation: float-spheres 20s infinite alternate ease-in-out;
+}
+
+.bg-sphere-1 {
+  width: 550px;
+  height: 550px;
+  background: radial-gradient(circle, rgba(53,67,246,0.12) 0%, transparent 70%);
+  top: -100px;
+  left: -100px;
+}
+
+.bg-sphere-2 {
+  width: 450px;
+  height: 450px;
+  background: radial-gradient(circle, rgba(53,67,246,0.08) 0%, transparent 70%);
+  top: 45%;
+  right: -150px;
+  animation-delay: -5s;
+}
+
+@keyframes float-spheres {
+  0% { transform: translate(0, 0) scale(1); }
+  50% { transform: translate(40px, -50px) scale(1.05); }
+  100% { transform: translate(-20px, 30px) scale(0.95); }
+}
+
+/* ============================================================
+   TYPOGRAPHY & UTILITIES
+   ============================================================ */
+.container {
+  width: min(1120px, calc(100% - 32px));
+  margin: 0 auto;
+}
+
+.gradient-text {
+  background: linear-gradient(135deg, var(--primary) 30%, #5d6afe 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.pill-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 14px;
+  background-color: var(--primary-light);
+  border: 1px solid var(--primary-soft);
+  color: var(--primary);
+  border-radius: var(--radius-full);
+  font-size: 12px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+/* ============================================================
+   HEADER / NAVBAR
+   ============================================================ */
+.navbar {
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  background: rgba(255, 255, 255, 0.85);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border-bottom: 1px solid rgba(53, 67, 246, 0.06);
+  transition: var(--transition-smooth);
+}
+
+.navbar-inner {
+  height: 64px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.logo-link {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 20px;
+  font-weight: 850;
+  letter-spacing: -0.8px;
+  color: var(--neutral-dark);
+  text-decoration: none;
+  transition: transform var(--transition-fast);
+}
+
+.logo-link:hover {
+  transform: scale(0.98);
+}
+
+.logo-box {
+  width: 30px;
+  height: 30px;
+  background-color: var(--primary);
+  border-radius: 6px;
+  display: grid;
+  place-items: center;
+}
+
+.nav-status {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 5px 12px;
+  border-radius: var(--radius-full);
+  background-color: var(--primary-light);
+  border: 1px solid var(--primary-soft);
+  color: var(--primary);
+  font-size: 12.5px;
+  font-weight: 700;
+}
+
+.status-dot-pulse {
+  width: 6px;
+  height: 6px;
+  background-color: var(--primary);
+  border-radius: 50%;
+  position: relative;
+}
+
+.status-dot-pulse::after {
+  content: '';
+  position: absolute;
+  inset: -2px;
+  border-radius: 50%;
+  border: 1px solid var(--primary);
+  animation: pulse-dot 1.8s infinite ease-out;
+}
+
+@keyframes pulse-dot {
+  0% { transform: scale(0.8); opacity: 1; }
+  100% { transform: scale(2.2); opacity: 0; }
+}
+
+/* ============================================================
+   HERO SECTION (Compact Editorial Vector Layout)
+   ============================================================ */
+.hero {
+  padding: 60px 0 40px;
+}
+
+.hero-grid {
+  display: grid;
+  grid-template-columns: 1.1fr 0.9fr;
+  gap: 40px;
+  align-items: center;
+}
+
+.hero-text {
+  text-align: left;
+}
+
+.hero-text h1 {
+  font-size: clamp(32px, 4vw, 48px);
+  font-weight: 850;
+  line-height: 1.2;
+  letter-spacing: -1.5px;
+  margin: 12px 0 16px;
+  color: var(--neutral-dark);
+}
+
+.hero-description {
+  font-size: 16px;
+  color: var(--neutral-muted);
+  line-height: 1.7;
+  margin-bottom: 28px;
+  max-width: 540px;
+}
+
+.hero-actions {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+/* Compact Button */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 14px 28px;
+  font-size: 14.5px;
+  font-weight: 700;
+  border-radius: var(--radius-full);
+  cursor: pointer;
+  transition: all var(--transition-smooth);
+  text-decoration: none;
+  border: none;
+  outline: none;
+  font-family: inherit;
+}
+
+.btn-brand {
+  background-color: var(--primary);
+  color: #ffffff;
+  box-shadow: 0 8px 20px rgba(53, 67, 246, 0.15);
+}
+
+.btn-brand:hover {
+  background-color: var(--primary-hover);
+  transform: translateY(-2px);
+  box-shadow: 0 12px 28px rgba(53, 67, 246, 0.28);
+}
+
+.btn-brand:active {
+  transform: translateY(0);
+}
+
+.btn-outline {
+  background-color: var(--bg-card);
+  color: var(--neutral-dark);
+  border: 1px solid var(--border-color);
+  box-shadow: var(--shadow-sm);
+}
+
+.btn-outline:hover {
+  border-color: var(--primary);
+  color: var(--primary);
+  background-color: var(--primary-light);
+  transform: translateY(-2px);
+}
+
+/* Vector Illustration Art */
+.hero-art {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.vector-canvas {
+  width: 100%;
+  max-width: 380px;
+  height: auto;
+  filter: drop-shadow(0 15px 30px rgba(53, 67, 246, 0.08));
+}
+
+.pulse-circle {
+  animation: pulse-radar 2.5s infinite ease-in-out;
+  transform-origin: center;
+}
+
+@keyframes pulse-radar {
+  0%, 100% { transform: scale(1); opacity: 0.8; }
+  50% { transform: scale(1.1); opacity: 1; filter: drop-shadow(0 0 6px rgba(53, 67, 246, 0.4)); }
+}
+
+.flow-dash {
+  animation: flow-route 6s infinite linear;
+}
+
+@keyframes flow-route {
+  to { stroke-dashoffset: -40; }
+}
+
+/* Stats Row & Quote Box */
+.stats-strip {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 16px;
+  margin-top: 36px;
+}
+
+.stat-box {
+  background: var(--bg-card);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-md);
+  padding: 18px 20px;
+  box-shadow: var(--shadow-sm);
+  transition: all var(--transition-smooth);
+}
+
+.stat-box:hover {
+  transform: translateY(-3px);
+  box-shadow: var(--shadow-md);
+  border-color: var(--border-glow);
+}
+
+.stat-number {
+  font-size: 28px;
+  font-weight: 850;
+  color: var(--primary);
+  margin-bottom: 4px;
+}
+
+.stat-desc {
+  font-size: 13px;
+  color: var(--neutral-muted);
+  font-weight: 500;
+  line-height: 1.4;
+}
+
+.quote-wrap {
+  margin: 24px 0 48px;
+}
+
+.quote-container {
+  background: var(--primary-light);
+  border: 1px dashed rgba(53, 67, 246, 0.2);
+  border-radius: var(--radius-md);
+  padding: 20px 28px;
+  display: flex;
+  gap: 16px;
+  align-items: flex-start;
+}
+
+.quote-badge {
+  width: 36px;
+  height: 36px;
+  flex: 0 0 36px;
+  background-color: var(--primary);
+  color: #ffffff;
+  border-radius: 10px;
+  font-size: 24px;
+  font-family: Georgia, serif;
+  display: grid;
+  place-items: center;
+  font-weight: 800;
+}
+
+.quote-content-text {
+  font-size: 14.5px;
+  color: var(--neutral-dark);
+  line-height: 1.6;
+}
+
+.quote-content-text strong {
+  color: var(--primary);
+}
+
+/* ============================================================
+   DIAGNOSTIC WORKSPACE
+   ============================================================ */
+.workspace {
+  padding: 24px 0 80px;
+}
+
+.workspace-layout {
+  display: grid;
+  grid-template-columns: 310px 1fr;
+  gap: 32px;
+  align-items: start;
+}
+
+/* 1. Left Sticky Panel (Interactive Live Forecast) */
+.sidebar-sticky {
+  position: sticky;
+  top: 90px;
+  z-index: 10;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.forecast-card {
+  background: var(--bg-card);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-md);
+  padding: 24px;
+  box-shadow: var(--shadow-lg);
+  position: relative;
+  overflow: hidden;
+}
+
+.forecast-card::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0; height: 4px;
+  background-color: var(--primary);
+}
+
+.forecast-head-lbl {
+  font-size: 13px;
+  font-weight: 800;
+  color: var(--neutral-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  margin-bottom: 4px;
+}
+
+.forecast-digits {
+  display: flex;
+  align-items: baseline;
+  gap: 2px;
+}
+
+.forecast-num {
+  font-size: 44px;
+  font-weight: 900;
+  color: var(--primary);
+  line-height: 1;
+  letter-spacing: -1.5px;
+  transition: color var(--transition-smooth);
+}
+
+.forecast-max {
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--neutral-light);
+}
+
+.forecast-bar {
+  height: 6px;
+  background-color: #f1f5f9;
+  border-radius: var(--radius-full);
+  margin: 14px 0 20px;
+  overflow: hidden;
+}
+
+.forecast-fill {
+  height: 100%;
+  width: 0%;
+  background-color: var(--primary);
+  border-radius: var(--radius-full);
+  transition: width 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.1);
+}
+
+.tracks-group {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  padding: 16px 0;
+  border-top: 1px solid var(--border-color);
+  border-bottom: 1px solid var(--border-color);
+}
+
+.track-row {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.track-labels {
+  display: flex;
+  justify-content: space-between;
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--neutral-muted);
+}
+
+.track-slider {
+  height: 4px;
+  background-color: #f1f5f9;
+  border-radius: var(--radius-full);
+  overflow: hidden;
+}
+
+.track-fill-line {
+  height: 100%;
+  width: 0%;
+  background-color: var(--primary);
+  border-radius: var(--radius-full);
+  transition: width 0.35s ease;
+}
+
+.forecast-text-bubble {
+  padding-top: 16px;
+  text-align: center;
+}
+
+.forecast-alert-txt {
+  background-color: var(--primary-light);
+  color: var(--primary);
+  border: 1px solid var(--primary-soft);
+  border-radius: var(--radius-xs);
+  padding: 10px 14px;
+  font-size: 12.5px;
+  font-weight: 600;
+  line-height: 1.45;
+}
+
+/* Guide Chapter Info Card */
+.chapter-guide-card {
+  background: var(--neutral-dark);
+  color: #ffffff;
+  border-radius: var(--radius-md);
+  padding: 20px 24px;
+  box-shadow: var(--shadow-md);
+  position: relative;
+  overflow: hidden;
+}
+
+.chapter-guide-card::after {
+  content: '';
+  position: absolute;
+  right: -10px; bottom: -10px;
+  width: 80px; height: 80px;
+  background: radial-gradient(circle, rgba(255,255,255,0.04), transparent 70%);
+}
+
+.guide-label {
+  font-size: 12px;
+  font-weight: 700;
+  text-transform: uppercase;
+  color: var(--border-glow);
+  letter-spacing: 0.5px;
+  margin-bottom: 6px;
+}
+
+.guide-name-display {
+  font-size: 16px;
+  font-weight: 800;
+  margin-bottom: 8px;
+  line-height: 1.3;
+}
+
+.guide-desc-display {
+  font-size: 12.5px;
+  color: #94a3b8;
+  line-height: 1.5;
+}
+
+/* 2. Right Column (Questions Stack by Chapters) */
+.questions-stack {
+  display: flex;
+  flex-direction: column;
+  gap: 32px;
+}
+
+.chapter-block {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  scroll-margin-top: 80px;
+}
+
+.chapter-header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding-bottom: 10px;
+  border-bottom: 2px solid var(--border-color);
+}
+
+.chapter-number-badge {
+  width: 32px;
+  height: 32px;
+  border-radius: 8px;
+  background-color: var(--primary);
+  color: #ffffff;
+  font-size: 14px;
+  font-weight: 800;
+  display: grid;
+  place-items: center;
+}
+
+.chapter-info-text h2 {
+  font-size: 17.5px;
+  font-weight: 800;
+  color: var(--neutral-dark);
+}
+
+.chapter-info-text p {
+  font-size: 12.5px;
+  color: var(--neutral-muted);
+}
+
+/* Question Card - downscaled padding and size */
+.question-block-card {
+  background: var(--bg-card);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-md);
+  padding: 24px;
+  transition: all var(--transition-smooth);
+  position: relative;
+  overflow: hidden;
+}
+
+.question-block-card::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; bottom: 0; width: 4px;
+  background-color: var(--primary);
+  transform: scaleY(0);
+  transition: transform var(--transition-smooth);
+}
+
+/* Answered card styling */
+.question-block-card.answered {
+  border-color: var(--border-glow);
+  box-shadow: var(--shadow-md);
+}
+
+.question-block-card.answered::before {
+  transform: scaleY(1);
+}
+
+.q-top-row {
+  display: flex;
+  gap: 16px;
+  align-items: flex-start;
+  margin-bottom: 20px;
+}
+
+.q-indicator {
+  width: 38px;
+  height: 38px;
+  flex: 0 0 38px;
+  border-radius: 10px;
+  background-color: var(--primary-light);
+  color: var(--primary);
+  font-size: 14px;
+  font-weight: 800;
+  display: grid;
+  place-items: center;
+  border: 1px solid var(--primary-soft);
+  transition: all var(--transition-smooth);
+}
+
+.question-block-card.answered .q-indicator {
+  background: var(--primary);
+  color: #ffffff;
+  box-shadow: 0 4px 10px rgba(53, 67, 246, 0.12);
+  border-color: transparent;
+}
+
+.q-text-title h3 {
+  font-size: 16px;
+  font-weight: 800;
+  line-height: 1.4;
+  color: var(--neutral-dark);
+  margin-bottom: 4px;
+}
+
+.q-text-title p {
+  font-size: 12.5px;
+  color: var(--neutral-muted);
+}
+
+/* Premium Options Layout */
+.options-vertical-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 12px;
+}
+
+.option-card-btn {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 16px 20px;
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--border-color);
+  background-color: var(--bg-card);
+  cursor: pointer;
+  transition: all var(--transition-smooth);
+  color: var(--neutral-muted);
+  font-weight: 600;
+  font-size: 13.5px;
+}
+
+.option-card-btn:hover {
+  border-color: var(--border-glow);
+  background-color: var(--primary-light);
+  color: var(--primary);
+  transform: translateY(-2px);
+}
+
+.option-card-btn input {
+  position: absolute;
+  opacity: 0;
+  pointer-events: none;
+}
+
+/* Clean vector icons for options */
+.option-vector-icon {
+  width: 24px;
+  height: 24px;
+  flex: 0 0 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--neutral-light);
+  transition: color var(--transition-fast);
+}
+
+.option-card-btn:hover .option-vector-icon {
+  color: var(--primary);
+}
+
+.option-radio-dot {
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  border: 1.5px solid #cbd5e1;
+  background-color: #ffffff;
+  flex: 0 0 18px;
+  margin-left: auto;
+  position: relative;
+  transition: all var(--transition-fast);
+}
+
+.option-radio-dot::after {
+  content: '';
+  position: absolute;
+  top: 50%; left: 50%;
+  transform: translate(-50%, -50%) scale(0);
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background-color: #ffffff;
+  transition: transform 0.2s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+/* Checked option states */
+.option-card-btn:has(input:checked) {
+  border-color: var(--primary);
+  background-color: var(--primary-light);
+  color: var(--primary);
+  box-shadow: 0 6px 15px rgba(53, 67, 246, 0.05);
+}
+
+.option-card-btn:has(input:checked) .option-vector-icon {
+  color: var(--primary);
+}
+
+.option-card-btn:has(input:checked) .option-radio-dot {
+  border-color: var(--primary);
+  background-color: var(--primary);
+}
+
+.option-card-btn:has(input:checked) .option-radio-dot::after {
+  transform: translate(-50%, -50%) scale(1);
+}
+
+/* Icon rotation wobble on select */
+.option-card-btn:has(input:checked) .option-vector-icon svg {
+  animation: mini-wobble 0.4s ease;
+}
+
+@keyframes mini-wobble {
+  0%, 100% { transform: scale(1) rotate(0); }
+  30% { transform: scale(1.15) rotate(-10deg); }
+  70% { transform: scale(1.15) rotate(10deg); }
+}
+
+.quote-helper-box {
+  margin-top: 20px;
+  padding: 12px 16px;
+  border-radius: var(--radius-xs);
+  background: linear-gradient(90deg, var(--primary-light), rgba(255,255,255,0.2));
+  border-left: 3px solid var(--primary);
+  color: var(--neutral-muted);
+  font-size: 12.5px;
+  font-style: italic;
+  display: flex;
+  gap: 10px;
+}
+
+.quote-helper-mark {
+  font-size: 20px;
+  font-family: Georgia, serif;
+  color: var(--primary);
+  line-height: 1;
+}
+
+/* Submit zone panel */
+.submit-container-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 24px;
+  margin-top: 16px;
+  padding: 24px 30px;
+  border-radius: var(--radius-md);
+  background: linear-gradient(135deg, #ffffff 0%, var(--primary-light) 100%);
+  border: 1px solid var(--border-color);
+  box-shadow: var(--shadow-md);
+}
+
+.submit-advice-text {
+  color: var(--neutral-muted);
+  font-size: 13.5px;
+  max-width: 520px;
+}
+
+.submit-advice-text strong {
+  color: var(--primary);
+}
+
+/* ============================================================
+   HONEY BADGER COMPACT LOADING SCREEN
+   ============================================================ */
+#loading-overlay {
+  display: none;
+  position: fixed;
+  inset: 0;
+  z-index: 999;
+  background-color: var(--bg-main);
+  align-items: center;
+  justify-content: center;
+  padding: 16px;
+}
+
+.loader-card-box {
+  width: min(640px, 100%);
+  background: var(--bg-card);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-lg);
+  padding: 48px 32px;
+  box-shadow: var(--shadow-lg);
+  text-align: center;
+  position: relative;
+  overflow: hidden;
+}
+
+.loader-card-box::after {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0; height: 5px;
+  background-color: var(--primary);
+}
+
+.loader-badge-tag {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 6px 14px;
+  border-radius: var(--radius-full);
+  background-color: var(--primary-light);
+  border: 1px solid var(--primary-soft);
+  color: var(--primary);
+  font-size: 12px;
+  font-weight: 700;
+  margin-bottom: 20px;
+}
+
+.loader-title-text {
+  font-size: 28px;
+  font-weight: 850;
+  letter-spacing: -0.8px;
+  margin-bottom: 10px;
+}
+
+.loader-desc-text {
+  font-size: 14.5px;
+  color: var(--neutral-muted);
+  max-width: 480px;
+  margin: 0 auto 28px;
+  line-height: 1.6;
+}
+
+/* SVG Loader Ring */
+.ring-display-box {
+  position: relative;
+  display: inline-block;
+  margin-bottom: 24px;
+}
+
+.ring-loader-svg {
+  transform: rotate(-90deg);
+}
+
+.ring-loader-bg {
+  fill: none;
+  stroke: var(--primary-light);
+  stroke-width: 8;
+}
+
+.ring-loader-fill {
+  fill: none;
+  stroke: var(--primary);
+  stroke-width: 8;
+  stroke-linecap: round;
+  stroke-dasharray: 440;
+  stroke-dashoffset: 440;
+  transition: stroke-dashoffset 0.15s linear;
+}
+
+.ring-loader-val {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 30px;
+  font-weight: 900;
+  color: var(--primary);
+  letter-spacing: -1px;
+}
+
+/* Sliding Delivery Truck animation */
+.loader-track-road {
+  position: relative;
+  width: min(520px, 100%);
+  height: 70px;
+  margin: 16px auto 28px;
+  border-bottom: 3px dashed var(--border-color);
+  overflow: hidden;
+}
+
+.loader-track-road::before {
+  content: "";
+  position: absolute;
+  left: 0; right: 0; bottom: 0;
+  height: 16px;
+  background: linear-gradient(to top, rgba(53, 67, 246, 0.03), transparent);
+}
+
+.truck-wrapper-node {
+  position: absolute;
+  left: 0;
+  bottom: 4px;
+  transform: translateX(0);
+  transition: transform 0.15s linear;
+}
+
+.van-svg-illustration {
+  width: 76px;
+  height: auto;
+  filter: drop-shadow(0 6px 10px rgba(53, 67, 246, 0.1));
+}
+
+.van-wheel {
+  animation: rotate-wheel 1s infinite linear;
+  transform-origin: center;
+}
+
+@keyframes rotate-wheel {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+.van-driver-badger {
+  animation: badger-wobble 0.4s infinite alternate ease-in-out;
+  transform-origin: bottom center;
+}
+
+@keyframes badger-wobble {
+  from { transform: translateY(0); }
+  to { transform: translateY(-2.5px); }
+}
+
+.loader-dynamic-phrase {
+  font-size: 14.5px;
+  color: var(--neutral-muted);
+  font-weight: 600;
+  min-height: 24px;
+}
+
+/* ============================================================
+   RESULTS DIAGNOSTIC PORTAL
+   ============================================================ */
+#diagnostic-results {
+  display: none;
+  padding: 48px 0 80px;
+}
+
+.results-main-card {
+  position: relative;
+  overflow: hidden;
+  background-color: var(--bg-card);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-lg);
+  padding: 48px;
+  box-shadow: var(--shadow-lg);
+}
+
+.results-main-card::before {
+  content: "";
+  position: absolute;
+  top: 0; left: 0; right: 0; height: 5px;
+  background-color: var(--primary);
+}
+
+.results-header-tag {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 14px;
+  background-color: var(--primary-light);
+  color: var(--primary);
+  border-radius: var(--radius-full);
+  font-weight: 700;
+  font-size: 12.5px;
+  margin-bottom: 28px;
+  border: 1px solid var(--primary-soft);
+}
+
+.results-score-row {
+  display: grid;
+  grid-template-columns: 160px 1fr;
+  gap: 36px;
+  align-items: center;
+  margin-bottom: 36px;
+}
+
+/* Circular Gauge Score */
+.results-score-circle-wrap {
+  position: relative;
+  width: 160px;
+  height: 160px;
+}
+
+.results-gauge-svg {
+  transform: rotate(-90deg);
+}
+
+.results-gauge-bg {
+  fill: none;
+  stroke: var(--primary-light);
+  stroke-width: 9;
+}
+
+.results-gauge-fill {
+  fill: none;
+  stroke: var(--primary);
+  stroke-width: 9;
+  stroke-linecap: round;
+  stroke-dasharray: 440;
+  stroke-dashoffset: 440;
+  transition: stroke-dashoffset 1.8s cubic-bezier(0.1, 0.8, 0.2, 1);
+}
+
+.results-score-inner-val {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+.results-score-val-digit {
+  font-size: 52px;
+  font-weight: 900;
+  color: var(--primary);
+  line-height: 1;
+  letter-spacing: -1.5px;
+}
+
+.results-score-val-scale {
+  font-size: 11px;
+  color: var(--neutral-light);
+  font-weight: 800;
+  margin-top: 2px;
+  letter-spacing: 0.5px;
+}
+
+.results-summary-content h2 {
+  font-size: 26px;
+  font-weight: 850;
+  line-height: 1.3;
+  letter-spacing: -0.8px;
+  margin-bottom: 10px;
+  color: var(--neutral-dark);
+}
+
+.results-summary-content p {
+  color: var(--neutral-muted);
+  font-size: 15px;
+  line-height: 1.65;
+}
+
+/* Badge Award Container */
+.badge-hero-box {
+  background-color: var(--primary-light);
+  border: 1px solid rgba(53, 67, 246, 0.1);
+  border-radius: var(--radius-md);
+  padding: 24px;
+  display: grid;
+  grid-template-columns: 80px 1fr;
+  gap: 20px;
+  align-items: center;
+  margin-bottom: 36px;
+}
+
+.badge-vector-artwork {
+  width: 80px;
+  height: 80px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.badge-details-col h3 {
+  font-size: 12px;
+  font-weight: 800;
+  color: var(--primary);
+  text-transform: uppercase;
+  letter-spacing: 0.8px;
+  margin-bottom: 4px;
+}
+
+.badge-details-name {
+  font-size: 18px;
+  font-weight: 850;
+  color: var(--neutral-dark);
+  margin-bottom: 6px;
+}
+
+.badge-details-desc {
+  font-size: 13.5px;
+  color: var(--neutral-muted);
+  line-height: 1.5;
+}
+
+/* Pillar Breakdown Cards Grid */
+.pillar-breakdown-heading {
+  font-size: 18px;
+  font-weight: 850;
+  margin-bottom: 20px;
+  color: var(--neutral-dark);
+}
+
+.pillar-cards-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 20px;
+  margin-bottom: 40px;
+}
+
+.pillar-card-insight {
+  background-color: var(--bg-card);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-md);
+  padding: 24px;
+  box-shadow: var(--shadow-sm);
+  transition: all var(--transition-smooth);
+}
+
+.pillar-card-insight:hover {
+  transform: translateY(-4px);
+  border-color: var(--border-glow);
+  box-shadow: var(--shadow-md);
+}
+
+.pillar-card-head {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 12px;
+}
+
+.pillar-card-icon-box {
+  width: 32px;
+  height: 32px;
+  border-radius: 8px;
+  background-color: var(--primary-light);
+  color: var(--primary);
+  display: grid;
+  place-items: center;
+  font-size: 16px;
+}
+
+.pillar-card-head h4 {
+  font-size: 14px;
+  font-weight: 800;
+  color: var(--neutral-dark);
+}
+
+.pillar-card-insight p {
+  color: var(--neutral-muted);
+  font-size: 13px;
+  line-height: 1.6;
+}
+
+/* ============================================================
+   PREMIUM BLURRED CURIOSITY SECTION
+   ============================================================ */
+.curiosity-heading {
+  font-size: 18px;
+  font-weight: 850;
+  margin-bottom: 20px;
+  color: var(--neutral-dark);
+}
+
+.curiosity-blurred-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 24px;
+  margin-bottom: 40px;
+}
+
+.curiosity-card {
+  position: relative;
+  overflow: hidden;
+  border-radius: var(--radius-md);
+  border: 1px solid var(--border-color);
+  background-color: #ffffff;
+  padding: 28px;
+  box-shadow: var(--shadow-sm);
+  min-height: 220px;
+}
+
+/* Blurred layout inside - looks like realistic charts */
+.curiosity-blur-layout {
+  filter: blur(7px);
+  opacity: 0.28;
+  user-select: none;
+  pointer-events: none;
+}
+
+.curiosity-lock-overlay {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: 24px;
+  background-color: rgba(255, 255, 255, 0.85);
+  backdrop-filter: blur(3px);
+}
+
+.curiosity-lock-circle {
+  width: 44px;
+  height: 44px;
+  background-color: var(--primary);
+  color: #ffffff;
+  border-radius: 50%;
+  display: grid;
+  place-items: center;
+  box-shadow: 0 6px 14px rgba(53, 67, 246, 0.2);
+  margin-bottom: 12px;
+  animation: wiggle-padlock 3.2s infinite ease-in-out;
+}
+
+@keyframes wiggle-padlock {
+  0%, 100% { transform: rotate(0deg) scale(1); }
+  30% { transform: rotate(-8deg) scale(1.04); }
+  70% { transform: rotate(8deg) scale(1.04); }
+}
+
+.curiosity-lock-title {
+  font-size: 15px;
+  font-weight: 850;
+  color: var(--neutral-dark);
+  margin-bottom: 4px;
+}
+
+.curiosity-lock-desc {
+  font-size: 12.5px;
+  color: var(--neutral-muted);
+  max-width: 260px;
+}
+
+/* Premium PDF Unlock CTA Form Box */
+.results-unlock-box {
+  background: linear-gradient(135deg, #ffffff 0%, var(--primary-light) 100%);
+  border-radius: var(--radius-lg);
+  padding: 40px;
+  border: 1px solid var(--border-color);
+  box-shadow: var(--shadow-md);
+  text-align: center;
+}
+
+.results-unlock-box h3 {
+  font-size: 24px;
+  font-weight: 850;
+  letter-spacing: -0.5px;
+  margin-bottom: 10px;
+  color: var(--neutral-dark);
+}
+
+.results-unlock-box p {
+  color: var(--neutral-muted);
+  font-size: 14.5px;
+  max-width: 580px;
+  margin: 0 auto 30px;
+  line-height: 1.6;
+}
+
+.lead-grid-form {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 16px;
+  max-width: 680px;
+  margin: 0 auto;
+}
+
+.lead-form-group {
+  display: flex;
+  flex-direction: column;
+  text-align: left;
+  gap: 6px;
+}
+
+.lead-form-group label {
+  font-size: 12.5px;
+  font-weight: 700;
+  color: var(--neutral-muted);
+}
+
+.lead-grid-form input {
+  width: 100%;
+  border: 1px solid var(--border-color);
+  background-color: #ffffff;
+  border-radius: var(--radius-xs);
+  padding: 12px 16px;
+  font-size: 14px;
+  font-family: inherit;
+  outline: none;
+  transition: all var(--transition-smooth);
+}
+
+.lead-grid-form input:focus {
+  border-color: var(--primary);
+  box-shadow: 0 0 0 3px var(--primary-glow);
+}
+
+.btn-lead-submit {
+  grid-column: 1 / -1;
+  margin-top: 10px;
+  width: 100%;
+}
+
+/* ============================================================
+   RESPONSIVE LAYOUTS
+   ============================================================ */
+@media (max-width: 960px) {
+  .hero-grid {
+    grid-template-columns: 1fr;
+    gap: 30px;
+    text-align: center;
+  }
+  
+  .hero-text {
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+  
+  .hero-actions {
+    justify-content: center;
+  }
+  
+  .workspace-layout {
+    grid-template-columns: 1fr;
+  }
+  
+  .sidebar-sticky {
+    position: relative;
+    top: 0;
+    margin-bottom: 16px;
+  }
+}
+
+@media (max-width: 720px) {
+  .stats-strip {
+    grid-template-columns: 1fr;
+    gap: 12px;
+  }
+  
+  .options-vertical-grid {
+    grid-template-columns: 1fr;
+  }
+  
+  .results-score-row {
+    grid-template-columns: 1fr;
+    text-align: center;
+    justify-items: center;
+  }
+  
+  .badge-hero-box {
+    grid-template-columns: 1fr;
+    text-align: center;
+    justify-items: center;
+  }
+  
+  .pillar-cards-grid {
+    grid-template-columns: 1fr;
+  }
+  
+  .curiosity-blurred-grid {
+    grid-template-columns: 1fr;
+  }
+  
+  .lead-grid-form {
+    grid-template-columns: 1fr;
+  }
+  
+  .results-main-card {
+    padding: 30px 20px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  * {
+    animation: none !important;
+    transition: none !important;
+  }
+}
+</style>
+</head>
+<body>
+
+<!-- Dot Grid & Blur Background Circles -->
+<div class="bg-canvas">
+  <div class="bg-glow-sphere bg-sphere-1"></div>
+  <div class="bg-glow-sphere bg-sphere-2"></div>
+  <div class="bg-dot-grid"></div>
+</div>
+
+<!-- Confetti Overlay Element -->
+<div class="confetti-canvas" id="confetti-canvas-overlay"></div>
+
+<!-- ============================================================
+     GLASS NAVBAR
+     ============================================================ -->
+<nav class="navbar">
+  <div class="container navbar-inner">
+    <a href="#" class="logo-link">
+      <div class="logo-box">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#ffffff" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+          <polyline points="22 12 18 12 15 21 9 3 6 12 2 12"></polyline>
+        </svg>
+      </div>
+      <span>SMARTLOG</span>
+    </a>
+    
+    <div class="nav-status">
+      <div class="status-dot-pulse"></div>
+      <span>Chẩn Đoán Vận Tải v3</span>
+    </div>
+  </div>
+</nav>
+
+<!-- ============================================================
+     MAIN LANDING SCREEN
+     ============================================================ -->
+<main id="quiz-screen">
+  
+  <!-- Hero Area -->
+  <section class="hero container">
+    <div class="hero-grid">
+      <div class="hero-text">
+        <div class="pill-badge">
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" style="animation: spin 6s linear infinite;"><circle cx="12" cy="12" r="10"/><path d="M12 2v2"/><path d="M12 20v2"/><path d="M4.93 4.93l1.41 1.41"/><path d="M17.66 17.66l1.41 1.41"/><path d="M2 12h2"/><path d="M20 12h2"/><path d="M6.34 17.66l-1.41 1.41"/><path d="M19.07 4.93l-1.41 1.41"/></svg>
+          <span style="margin-left: 5px;">Khảo sát năng lực số</span>
+        </div>
+        <h1>Đo lường & Tối ưu hóa <br><span class="gradient-text">Năng Lực Vận Tải</span></h1>
+        <p class="hero-description">Thực hiện bài kiểm tra sức khỏe logistics trong 3 phút để đo lường mức độ số hóa, phát hiện lãng phí rỗng tải và nhận ngay lộ trình tối ưu 90 ngày được thiết kế riêng.</p>
+        <div class="hero-actions">
+          <a href="#diagnostic-anchor" class="btn btn-brand">
+            <span>Bắt đầu Fast Check</span>
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polygon points="5 3 19 12 5 21 5 3"/></svg>
+          </a>
+          <a href="#diagnostic-anchor" class="btn btn-outline">Xem bộ câu hỏi</a>
+        </div>
+      </div>
+      
+      <!-- Premium Hub Artwork (Strict Blue/White themed) -->
+      <div class="hero-art">
+        <svg class="vector-canvas" viewBox="0 0 500 450" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <!-- Concentric network rings -->
+          <circle cx="250" cy="225" r="190" stroke="#3543f6" stroke-width="1.2" stroke-dasharray="10 12" opacity="0.2"/>
+          <circle cx="250" cy="225" r="140" stroke="#3543f6" stroke-width="1" stroke-dasharray="6 6" opacity="0.3"/>
+          
+          <!-- Route pathways -->
+          <path d="M90 310 C 180 330, 220 220, 250 225" stroke="#3543f6" stroke-width="1.8" stroke-dasharray="6 6" class="flow-dash"/>
+          <path d="M250 225 C 280 230, 320 130, 410 130" stroke="#3543f6" stroke-width="1.8" stroke-dasharray="6 6" class="flow-dash" style="animation-direction: reverse; animation-duration: 5s;"/>
+          <path d="M120 140 C 180 160, 220 220, 250 225" stroke="#3543f6" stroke-width="2" stroke-linecap="round" opacity="0.5"/>
+          <path d="M250 225 C 290 230, 350 330, 400 310" stroke="#3543f6" stroke-width="1.8" stroke-dasharray="5 5" class="flow-dash" style="animation-duration: 8s;"/>
+
+          <!-- Pulsing Map Pins / Nodes -->
+          <g class="pulse-circle" style="animation-delay: 0.1s;">
+            <circle cx="90" cy="310" r="12" fill="#3543f6" fill-opacity="0.1"/>
+            <circle cx="90" cy="310" r="5" fill="#3543f6"/>
+          </g>
+          <g class="pulse-circle" style="animation-delay: 0.7s;">
+            <circle cx="410" cy="130" r="12" fill="#3543f6" fill-opacity="0.1"/>
+            <circle cx="410" cy="130" r="5" fill="#3543f6"/>
+          </g>
+          <g class="pulse-circle" style="animation-delay: 1.2s;">
+            <circle cx="120" cy="140" r="10" fill="#3543f6" fill-opacity="0.1"/>
+            <circle cx="120" cy="140" r="4" fill="#3543f6"/>
+          </g>
+          <g class="pulse-circle" style="animation-delay: 0.4s;">
+            <circle cx="400" cy="310" r="14" fill="#3543f6" fill-opacity="0.1"/>
+            <circle cx="400" cy="310" r="6" fill="#3543f6"/>
+          </g>
+
+          <!-- Central Logistics Warehouse Graphic -->
+          <g transform="translate(205, 175)">
+            <!-- Base Shadow -->
+            <ellipse cx="45" cy="65" rx="50" ry="14" fill="#0b0f19" fill-opacity="0.08"/>
+            <!-- Hub Buildings -->
+            <!-- Back Bloc -->
+            <path d="M30 10 L 75 30 L 75 60 L 30 40 Z" fill="#e2e8f0"/>
+            <path d="M75 30 L 105 15 L 105 45 L 75 60 Z" fill="#cbd5e1"/>
+            <path d="M30 10 L 60 -5 L 105 15 L 75 30 Z" fill="#f1f5f9"/>
+            <!-- Front Bloc (Primary Color Accent) -->
+            <path d="M10 25 L 50 42 L 50 72 L 10 55 Z" fill="#3543f6"/>
+            <path d="M50 42 L 85 27 L 85 57 L 50 72 Z" fill="#1b28d4"/>
+            <path d="M10 25 L 45 10 L 85 27 L 50 42 Z" fill="#808cff"/>
+            <!-- Gate details -->
+            <path d="M25 45 L 35 49 L 35 57 L 25 53 Z" fill="#cbd5e1"/>
+            <path d="M58 52 L 72 46 L 72 59 L 58 65 Z" fill="#1e293b"/>
+            <!-- Floating Antennas -->
+            <path d="M45 10 L 45 -10" stroke="#3543f6" stroke-width="1.5" stroke-linecap="round" stroke-dasharray="2 2"/>
+            <circle cx="45" cy="-12" r="3" fill="#3543f6" class="pulse-circle"/>
+          </g>
+          
+          <!-- Decorative Floating Dashboard Mockups -->
+          <g transform="translate(75, 185)" class="pulse-circle" style="animation-duration: 4.5s;">
+            <rect x="0" y="0" width="24" height="24" rx="6" fill="#ffffff" stroke="#e2e8f0" stroke-width="1"/>
+            <path d="M6 14 L 10 9 L 14 11 L 18 6" stroke="#3543f6" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+          </g>
+          <g transform="translate(365, 195)" class="pulse-circle" style="animation-duration: 5s; animation-delay: 0.8s;">
+            <rect x="0" y="0" width="28" height="28" rx="8" fill="#ffffff" stroke="#e2e8f0" stroke-width="1"/>
+            <circle cx="14" cy="14" r="8" stroke="#3543f6" stroke-width="1.5"/>
+            <path d="M14 9 V 14 L 17 16" stroke="#3543f6" stroke-width="1.5" stroke-linecap="round"/>
+          </g>
+        </svg>
+      </div>
+    </div>
+
+    <!-- Stats summary row -->
+    <div class="stats-strip">
+      <div class="stat-box">
+        <div class="stat-number">10</div>
+        <div class="stat-desc">Khảo sát trọng tâm bao quát chuỗi vận hành, định vị năng lực hiện hữu.</div>
+      </div>
+      <div class="stat-box">
+        <div class="stat-number">3 Phút</div>
+        <div class="stat-desc">Hoàn thành nhanh gọn trực tiếp trên một trang. Có điểm số ngay lập tức.</div>
+      </div>
+      <div class="stat-box">
+        <div class="stat-number">1 Lộ Trình</div>
+        <div class="stat-desc">Kế hoạch cải tiến 90 ngày thực tiễn mở khóa benchmark toàn diện.</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Quote Strip -->
+  <section class="container quote-wrap">
+    <div class="quote-container">
+      <div class="quote-badge">“</div>
+      <div class="quote-content-text">
+        <strong>Triết lý tối ưu:</strong> Điều gì không được đo lường thì không thể quản lý. Điều gì không thể quản lý thì không thể tối ưu hóa. Bắt đầu thu thập dữ liệu đúng cách chính là bước đệm bứt phá biên lợi nhuận vận tải.
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================================================
+       DIAGNOSTIC WORKSPACE PANEL
+       ============================================================ -->
+  <section class="container workspace" id="diagnostic-anchor">
+    <div class="workspace-layout">
+      
+      <!-- STICKY INTERACTIVE FORECAST SIDEBAR -->
+      <aside class="sidebar-sticky">
+        
+        <!-- Live Forecast widget -->
+        <div class="forecast-card" id="live-forecast-widget">
+          <div class="forecast-head-lbl">Điểm sức khỏe dự báo</div>
+          <div class="forecast-digits">
+            <span class="forecast-num" id="live-score-preview">0</span>
+            <span class="forecast-max">/100đ</span>
+          </div>
+          
+          <div class="forecast-bar">
+            <div class="forecast-fill" id="live-bar-fill"></div>
+          </div>
+          
+          <!-- Tracks Completion of Pillars -->
+          <div class="tracks-group">
+            <div class="track-row">
+              <div class="track-labels">
+                <span>Vận hành & Điều phối</span>
+                <span id="track-val-p1">0%</span>
+              </div>
+              <div class="track-slider">
+                <div class="track-fill-line" id="track-fill-line-p1"></div>
+              </div>
+            </div>
+            <div class="track-row">
+              <div class="track-labels">
+                <span>Hiển thị & Kiểm soát</span>
+                <span id="track-val-p2">0%</span>
+              </div>
+              <div class="track-slider">
+                <div class="track-fill-line" id="track-fill-line-p2"></div>
+              </div>
+            </div>
+            <div class="track-row">
+              <div class="track-labels">
+                <span>Đo lường & Dữ liệu</span>
+                <span id="track-val-p3">0%</span>
+              </div>
+              <div class="track-slider">
+                <div class="track-fill-line" id="track-fill-line-p3"></div>
+              </div>
+            </div>
+          </div>
+          
+          <!-- Dynamic feedback bubble -->
+          <div class="forecast-text-bubble">
+            <div class="forecast-alert-txt" id="live-status-bubble">Chọn đáp án khảo sát để bắt đầu chẩn đoán sức khỏe vận tải.</div>
+          </div>
+        </div>
+
+        <!-- Pillar Description Guide -->
+        <div class="chapter-guide-card">
+          <div class="guide-label">Trụ cột khảo sát</div>
+          <div class="guide-name-display" id="active-guide-title">Khảo Sát Chưa Bắt Đầu</div>
+          <div class="guide-desc-display" id="active-guide-desc">Hãy cuộn xuống và click chọn câu trả lời ở câu hỏi đầu tiên để bắt đầu hành trình chẩn đoán.</div>
+        </div>
+
+      </aside>
+
+      <!-- QUESTIONS CONTAINER STACK -->
+      <div class="questions-stack">
+        <form id="healthDiagnosticForm">
+          
+          <!-- PILLAR 1: QUY MÔ & VẬN HÀNH -->
+          <div class="chapter-block" id="block-pillar-1">
+            <div class="chapter-header">
+              <div class="chapter-number-badge">I</div>
+              <div class="chapter-info-text">
+                <h2>Vận Hành & Điều Phối Đội Xe</h2>
+                <p>Khảo sát tính phức tạp của đội xe, phương pháp lập kế hoạch chuyến và hiệu suất rỗng tải</p>
+              </div>
+            </div>
+
+            <!-- Q1 -->
+            <div class="question-block-card" id="card-q1" data-pillar="1">
+              <div class="q-top-row">
+                <div class="q-indicator">01</div>
+                <div class="q-text-title">
+                  <h3>Quy mô đội xe hiện tại của doanh nghiệp?</h3>
+                  <p>Phản ánh trực diện mức độ phức tạp và thách thức trong việc điều động tài xế.</p>
+                </div>
+              </div>
+              <div class="options-vertical-grid">
+                <label class="option-card-btn">
+                  <input type="radio" name="q1" value="10">
+                  <div class="option-vector-icon">
+                    <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M9 3v18"/></svg>
+                  </div>
+                  <span>Dưới 20 xe</span>
+                  <div class="option-radio-dot"></div>
+                </label>
+                <label class="option-card-btn">
+                  <input type="radio" name="q1" value="15">
+                  <div class="option-vector-icon">
+                    <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M9 3v18M15 3v18"/></svg>
+                  </div>
+                  <span>20 - 50 xe</span>
+                  <div class="option-radio-dot"></div>
+                </label>
+                <label class="option-card-btn">
+                  <input type="radio" name="q1" value="20">
+                  <div class="option-vector-icon">
+                    <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18M3 15h18"/></svg>
+                  </div>
+                  <span>51 - 150 xe</span>
+                  <div class="option-radio-dot"></div>
+                </label>
+                <label class="option-card-btn">
+                  <input type="radio" name="q1" value="25">
+                  <div class="option-vector-icon">
+                    <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/></svg>
+                  </div>
+                  <span>Trên 150 xe / Đa nhà xe</span>
+                  <div class="option-radio-dot"></div>
+                </label>
+              </div>
+            </div>
+
+            <!-- Q2 -->
+            <div class="question-block-card" id="card-q2" data-pillar="1">
+              <div class="q-top-row">
+                <div class="q-indicator">02</div>
+                <div class="q-text-title">
+                  <h3>Đội điều phối đang phân bổ xe và lập chuyến bằng cách nào?</h3>
+                  <p>Cho thấy sự phụ thuộc vào kinh nghiệm con người và giới hạn khả năng mở rộng.</p>
+                </div>
+              </div>
+              <div class="options-vertical-grid">
+                <label class="option-card-btn">
+                  <input type="radio" name="q2" value="5">
+                  <div class="option-vector-icon">
+                    <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path d="M12 20h9M3 20v-8a2 2 0 012-2h4M3 12a2 2 0 012-2h4m-6 6h6"/></svg>
+                  </div>
+                  <span>Excel, Zalo, gọi điện thoại thoại là chính</span>
+                  <div class="option-radio-dot"></div>
+                </label>
+                <label class="option-card-btn">
+                  <input type="radio" name="q2" value="15">
+                  <div class="option-vector-icon">
+                    <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
+                  </div>
+                  <span>Có biểu mẫu Excel, chia tuyến thủ công</span>
+                  <div class="option-radio-dot"></div>
+                </label>
+                <label class="option-card-btn">
+                  <input type="radio" name="q2" value="20">
+                  <div class="option-vector-icon">
+                    <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><rect x="2" y="2" width="20" height="8" rx="2" ry="2"/><rect x="2" y="14" width="20" height="8" rx="2" ry="2"/><line x1="6" y1="6" x2="6.01" y2="6"/><line x1="6" y1="18" x2="6.01" y2="18"/></svg>
+                  </div>
+                  <span>Có hệ thống phần mềm hỗ trợ cơ bản</span>
+                  <div class="option-radio-dot"></div>
+                </label>
+                <label class="option-card-btn">
+                  <input type="radio" name="q2" value="25">
+                  <div class="option-icon option-vector-icon">
+                    <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path d="M21 16V8a2 2 0 00-1-1.73l-7-4a2 2 0 00-2 0l-7 4A2 2 0 003 8v8a2 2 0 001 1.73l7 4a2 2 0 002 0l7-4A2 2 0 0021 16z"/><polyline points="3.27 6.96 12 12.01 20.73 6.96"/><line x1="12" y1="22.08" x2="12" y2="12"/></svg>
+                  </div>
+                  <span>Có TMS tối ưu lộ trình tự động hóa</span>
+                  <div class="option-radio-dot"></div>
+                </label>
+              </div>
+              <div class="quote-helper-box">
+                <div class="quote-helper-mark">“</div>
+                <div>Lập kế hoạch phân chuyến thủ công khiến điều phối viên tiêu tốn từ 2 đến 4 tiếng mỗi ngày và khó đảm bảo tính tối ưu quãng đường.</div>
+              </div>
+            </div>
+
+            <!-- Q9 -->
+            <div class="question-block-card" id="card-q9" data-pillar="1">
+              <div class="q-top-row">
+                <div class="q-indicator">03</div>
+                <div class="q-text-title">
+                  <h3>Doanh nghiệp có kiểm soát tỷ lệ rỗng tải & tải trọng xe không?</h3>
+                  <p>Hao phí tải trọng chạy rỗng là nguyên nhân chính đẩy giá cước logistics tăng cao.</p>
+                </div>
+              </div>
+              <div class="options-vertical-grid">
+                <label class="option-card-btn">
+                  <input type="radio" name="q9" value="5">
+                  <div class="option-vector-icon">
+                    <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/></svg>
+                  </div>
+                  <span>Chưa từng đo lường</span>
+                  <div class="option-radio-dot"></div>
+                </label>
+                <label class="option-card-btn">
+                  <input type="radio" name="q9" value="12">
+                  <div class="option-vector-icon">
+                    <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/></svg>
+                  </div>
+                  <span>Đo lường thủ công ước lượng định kỳ</span>
+                  <div class="option-radio-dot"></div>
+                </label>
+                <label class="option-card-btn">
+                  <input type="radio" name="q9" value="20">
+                  <div class="option-vector-icon">
+                    <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>
+                  </div>
+                  <span>Có báo cáo hiệu suất theo tuần/tháng</span>
+                  <div class="option-radio-dot"></div>
+                </label>
+                <label class="option-card-btn">
+                  <input type="radio" name="q9" value="25">
+                  <div class="option-vector-icon">
+                    <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path d="M12 20v-6M6 20V10M18 20V4"/></svg>
+                  </div>
+                  <span>Hệ thống phân tích liên tục thời gian thực</span>
+                  <div class="option-radio-dot"></div>
+                </label>
+              </div>
+            </div>
+          </div>
+
+          <!-- PILLAR 2: TẦM NHÌN & KIỂM SOÁT -->
+          <div class="chapter-block" id="block-pillar-2">
+            <div class="chapter-header">
+              <div class="chapter-number-badge">II</div>
+              <div class="chapter-info-text">
+                <h2>Khả Năng Hiển Thị & Kiểm Soát</h2>
+                <p>Khảo sát việc giám sát hành trình xe chạy, cổng tra cứu thông tin của khách và quản lý tài xế</p>
+              </div>
+            </div>
+
+            <!-- Q3 -->
+            <div class="question-block-card" id="card-q3" data-pillar="2">
+              <div class="q-top-row">
+                <div class="q-indicator">04</div>
+                <div class="q-text-title">
+                  <h3>Doanh nghiệp giám sát xe chạy trên đường bằng cách nào?</h3>
+                  <p>Quyết định tốc độ xử lý sự cố phát sinh ngoài lộ trình thực tế.</p>
+                </div>
+              </div>
+              <div class="options-vertical-grid">
+                <label class="option-card-btn">
+                  <input type="radio" name="q3" value="5">
+                  <div class="option-vector-icon">
+                    <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+                  </div>
+                  <span>Chưa có thiết bị, gọi điện thoại hỏi trực tiếp</span>
+                  <div class="option-radio-dot"></div>
+                </label>
+                <label class="option-card-btn">
+                  <input type="radio" name="q3" value="12">
+                  <div class="option-vector-icon">
+                    <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><polygon points="1 6 1 22 8 18 16 22 23 18 23 2 16 6 8 2 1 6"/><line x1="8" y1="2" x2="8" y2="18"/><line x1="16" y1="6" x2="16" y2="22"/></svg>
+                  </div>
+                  <span>Có GPS giám sát nhưng dữ liệu rời rạc</span>
+                  <div class="option-radio-dot"></div>
+                </label>
+                <label class="option-card-btn">
+                  <input type="radio" name="q3" value="20">
+                  <div class="option-vector-icon">
+                    <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0118 0z"/><circle cx="12" cy="10" r="3"/></svg>
+                  </div>
+                  <span>GPS tích hợp phần mềm nhưng chưa map đơn</span>
+                  <div class="option-radio-dot"></div>
+                </label>
+                <label class="option-card-btn">
+                  <input type="radio" name="q3" value="25">
+                  <div class="option-vector-icon">
+                    <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M16.24 7.76a6 6 0 010 8.49m-8.48-.01a6 6 0 010-8.49m5.66 2.83a2 2 0 010 2.83m-2.83-.01a2 2 0 010-2.83"/></svg>
+                  </div>
+                  <span>Real-time Visibility đồng bộ theo đơn hàng</span>
+                  <div class="option-radio-dot"></div>
+                </label>
+              </div>
+            </div>
+
+            <!-- Q4 -->
+            <div class="question-block-card" id="card-q4" data-pillar="2">
+              <div class="q-top-row">
+                <div class="q-indicator">05</div>
+                <div class="q-text-title">
+                  <h3>Khách hàng của bạn tra cứu thông tin đơn hàng thế nào?</h3>
+                  <p>Sự minh bạch thông tin giúp giảm đáng kể áp lực lên bộ phận CS và Sales.</p>
+                </div>
+              </div>
+              <div class="options-vertical-grid">
+                <label class="option-card-btn">
+                  <input type="radio" name="q4" value="5">
+                  <div class="option-vector-icon">
+                    <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07 19.5 19.5 0 01-6-6 19.79 19.79 0 01-3.07-8.67A2 2 0 014.11 2h3a2 2 0 012 1.72 12.84 12.84 0 00.7 2.81 2 2 0 01-.45 2.11L8.09 9.91a16 16 0 006 6l1.27-1.27a2 2 0 012.11-.45 12.84 12.84 0 002.81.7A2 2 0 0122 16.92z"/></svg>
+                  </div>
+                  <span>Phải liên hệ thủ công qua điện thoại/CS</span>
+                  <div class="option-radio-dot"></div>
+                </label>
+                <label class="option-card-btn">
+                  <input type="radio" name="q4" value="12">
+                  <div class="option-vector-icon">
+                    <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg>
+                  </div>
+                  <span>Nhận cập nhật thủ công qua các nhóm chat</span>
+                  <div class="option-radio-dot"></div>
+                </label>
+                <label class="option-card-btn">
+                  <input type="radio" name="q4" value="18">
+                  <div class="option-vector-icon">
+                    <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="16" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+                  </div>
+                  <span>Đăng nhập cổng thông tin portal tra cứu cơ bản</span>
+                  <div class="option-radio-dot"></div>
+                </label>
+                <label class="option-card-btn">
+                  <input type="radio" name="q4" value="25">
+                  <div class="option-vector-icon">
+                    <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path d="M10 13a5 5 0 007.54.54l3-3a5 5 0 00-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 00-7.54-.54l-3 3a5 5 0 007.07 7.07l1.71-1.71"/></svg>
+                  </div>
+                  <span>Có link tracking tự động hóa trạng thái thực</span>
+                  <div class="option-radio-dot"></div>
+                </label>
+              </div>
+            </div>
+
+            <!-- Q8 -->
+            <div class="question-block-card" id="card-q8" data-pillar="2">
+              <div class="q-top-row">
+                <div class="q-indicator">06</div>
+                <div class="q-text-title">
+                  <h3>Đo lường, kiểm soát hiệu suất tài xế & vendor vận tải?</h3>
+                  <p>Mức độ quản trị chất lượng dịch vụ giao hàng cuối và bảo vệ uy tín thương hiệu.</p>
+                </div>
+              </div>
+              <div class="options-vertical-grid">
+                <label class="option-card-btn">
+                  <input type="radio" name="q8" value="5">
+                  <div class="option-vector-icon">
+                    <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path d="M18.36 6.64a9 9 0 11-12.73 0M12 2v10"/></svg>
+                  </div>
+                  <span>Chưa thiết lập cơ chế đo lường</span>
+                  <div class="option-radio-dot"></div>
+                </label>
+                <label class="option-card-btn">
+                  <input type="radio" name="q8" value="12">
+                  <div class="option-vector-icon">
+                    <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/></svg>
+                  </div>
+                  <span>Đánh giá thủ công khi phát sinh sự cố lớn</span>
+                  <div class="option-radio-dot"></div>
+                </label>
+                <label class="option-card-btn">
+                  <input type="radio" name="q8" value="18">
+                  <div class="option-vector-icon">
+                    <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path d="M12 22c5.523 0 10-4.477 10-10S17.523 2 12 2 2 6.477 2 12s4.477 10 10 10z"/><path d="M22 12H2"/></svg>
+                  </div>
+                  <span>Đánh giá định kỳ theo báo cáo tĩnh hàng tháng</span>
+                  <div class="option-radio-dot"></div>
+                </label>
+                <label class="option-card-btn">
+                  <input type="radio" name="q8" value="25">
+                  <div class="option-vector-icon">
+                    <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+                  </div>
+                  <span>Hệ thống tự động xếp hạng chấm điểm KPI</span>
+                  <div class="option-radio-dot"></div>
+                </label>
+              </div>
+              <div class="quote-helper-box">
+                <div class="quote-helper-mark">“</div>
+                <div>Phần lớn các khiếu nại phát sinh từ tài xế giao trễ. Thiếu công cụ đo lường sẽ khiến doanh nghiệp mất khả năng quy kết trách nhiệm chính xác.</div>
+              </div>
+            </div>
+          </div>
+
+          <!-- PILLAR 3: ĐO LƯỜNG & DỮ LIỆU -->
+          <div class="chapter-block" id="block-pillar-3">
+            <div class="chapter-header">
+              <div class="chapter-number-badge">III</div>
+              <div class="chapter-info-text">
+                <h2>Đo Lường & Quản Trị Dữ Liệu</h2>
+                <p>Khảo sát báo cáo KPI trực quan, tỷ lệ giao hàng đúng hạn OTD, cấu trúc dữ liệu lịch sử và nút thắt vận hành</p>
+              </div>
+            </div>
+
+            <!-- Q5 -->
+            <div class="question-block-card" id="card-q5" data-pillar="3">
+              <div class="q-top-row">
+                <div class="q-indicator">07</div>
+                <div class="q-text-title">
+                  <h3>Hệ thống báo cáo KPI vận tải của doanh nghiệp đang ở mức nào?</h3>
+                  <p>Đo lường thời gian tổng hợp số liệu hỗ trợ ra quyết định của ban lãnh đạo.</p>
+                </div>
+              </div>
+              <div class="options-vertical-grid">
+                <label class="option-card-btn">
+                  <input type="radio" name="q5" value="5">
+                  <div class="option-vector-icon">
+                    <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path d="M13 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V9z"/><polyline points="13 2 13 9 20 9"/></svg>
+                  </div>
+                  <span>Không đo lường báo cáo chỉ số</span>
+                  <div class="option-radio-dot"></div>
+                </label>
+                <label class="option-card-btn">
+                  <input type="radio" name="q5" value="12">
+                  <div class="option-vector-icon">
+                    <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path d="M16 4h2a2 2 0 012 2v14a2 2 0 01-2 2H6a2 2 0 01-2-2V6a2 2 0 012-2h2"/><rect x="8" y="2" width="8" height="4" rx="1" ry="1"/></svg>
+                  </div>
+                  <span>Báo cáo Excel thủ công vào cuối tháng</span>
+                  <div class="option-radio-dot"></div>
+                </label>
+                <label class="option-card-btn">
+                  <input type="radio" name="q5" value="18">
+                  <div class="option-vector-icon">
+                    <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2zM12 7v5l3 3"/></svg>
+                  </div>
+                  <span>Có dashboard BI phân tích nhưng độ trễ cao</span>
+                  <div class="option-radio-dot"></div>
+                </label>
+                <label class="option-card-btn">
+                  <input type="radio" name="q5" value="25">
+                  <div class="option-vector-icon">
+                    <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path d="M18 20V10M12 20V4M6 20v-6"/></svg>
+                  </div>
+                  <span>Dashboard Real-time cập nhật tự động hóa</span>
+                  <div class="option-radio-dot"></div>
+                </label>
+              </div>
+            </div>
+
+            <!-- Q6 -->
+            <div class="question-block-card" id="card-q6" data-pillar="3">
+              <div class="q-top-row">
+                <div class="q-indicator">08</div>
+                <div class="q-text-title">
+                  <h3>Tỷ lệ giao hàng đúng hạn OTD trung bình?</h3>
+                  <p>Chỉ số hàng đầu phản ánh năng lực cam kết dịch vụ và mức độ hài lòng khách hàng.</p>
+                </div>
+              </div>
+              <div class="options-vertical-grid">
+                <label class="option-card-btn">
+                  <input type="radio" name="q6" value="5">
+                  <div class="option-vector-icon">
+                    <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+                  </div>
+                  <span>Chưa thiết lập đo lường</span>
+                  <div class="option-radio-dot"></div>
+                </label>
+                <label class="option-card-btn">
+                  <input type="radio" name="q6" value="10">
+                  <div class="option-vector-icon">
+                    <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path d="M10 9l-6 6h18"/></svg>
+                  </div>
+                  <span>Dưới 85% (bị khách hàng phàn nàn thường xuyên)</span>
+                  <div class="option-radio-dot"></div>
+                </label>
+                <label class="option-card-btn">
+                  <input type="radio" name="q6" value="18">
+                  <div class="option-vector-icon">
+                    <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path d="M22 11.08V12a10 10 0 11-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+                  </div>
+                  <span>Từ 85% - 95% (ổn định tương đối)</span>
+                  <div class="option-radio-dot"></div>
+                </label>
+                <label class="option-card-btn">
+                  <input type="radio" name="q6" value="25">
+                  <div class="option-vector-icon">
+                    <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path d="M12 22c5.523 0 10-4.477 10-10S17.523 2 12 2 2 6.477 2 12s4.477 10 10 10z"/><path d="M9 12l2 2 4-4"/></svg>
+                  </div>
+                  <span>Trên 95% (chuẩn mực xuất sắc)</span>
+                  <div class="option-radio-dot"></div>
+                </label>
+              </div>
+              <div class="quote-helper-box">
+                <div class="quote-helper-mark">“</div>
+                <div>Gia tăng 1% OTD giúp các doanh nghiệp tiết giảm đáng kể chi phí cơ hội do đền bù hợp đồng và tăng tỷ lệ giữ chân khách hàng.</div>
+              </div>
+            </div>
+
+            <!-- Q7 -->
+            <div class="question-block-card" id="card-q7" data-pillar="3">
+              <div class="q-top-row">
+                <div class="q-indicator">09</div>
+                <div class="q-text-title">
+                  <h3>Dữ liệu lịch sử vận chuyển được lưu giữ ở đâu?</h3>
+                  <p>Mức độ chuẩn hóa của dữ liệu phục vụ nghiên cứu xu hướng và phân tích tối ưu.</p>
+                </div>
+              </div>
+              <div class="options-vertical-grid">
+                <label class="option-card-btn">
+                  <input type="radio" name="q7" value="5">
+                  <div class="option-vector-icon">
+                    <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"/></svg>
+                  </div>
+                  <span>Phân tán trên các file Excel cá nhân và Zalo</span>
+                  <div class="option-radio-dot"></div>
+                </label>
+                <label class="option-card-btn">
+                  <input type="radio" name="q7" value="12">
+                  <div class="option-vector-icon">
+                    <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path d="M8 7v12m8-12v12M2 19h20M2 5h20"/></svg>
+                  </div>
+                  <span>Lưu thủ công tập trung trên Google Drive chung</span>
+                  <div class="option-radio-dot"></div>
+                </label>
+                <label class="option-card-btn">
+                  <input type="radio" name="q7" value="18">
+                  <div class="option-vector-icon">
+                    <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><ellipse cx="12" cy="5" rx="9" ry="3"/><path d="M3 5v14c0 1.66 4 3 9 3s9-1.34 9-3V5"/><path d="M3 12c0 1.66 4 3 9 3s9-1.34 9-3"/></svg>
+                  </div>
+                  <span>Lưu trữ trên cơ sở dữ liệu của hệ thống ERP/WMS</span>
+                  <div class="option-radio-dot"></div>
+                </label>
+                <label class="option-card-btn">
+                  <input type="radio" name="q7" value="25">
+                  <div class="option-vector-icon">
+                    <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><ellipse cx="12" cy="5" rx="9" ry="3"/><path d="M3 5v14c0 1.66 4 3 9 3s9-1.34 9-3V5"/><path d="M3 12c0 1.66 4 3 9 3s9-1.34 9-3"/><path d="M21 21l-6-6m2 0a5 5 0 11-10 0 5 5 0 0110 0z"/></svg>
+                  </div>
+                  <span>CSDL Cloud đồng nhất, dễ truy xuất báo cáo</span>
+                  <div class="option-radio-dot"></div>
+                </label>
+              </div>
+            </div>
+
+            <!-- Q10 -->
+            <div class="question-block-card" id="card-q10" data-pillar="3">
+              <div class="q-top-row">
+                <div class="q-indicator">10</div>
+                <div class="q-text-title">
+                  <h3>Thách thức lớn nhất trong quản trị vận chuyển của doanh nghiệp?</h3>
+                  <p>Xác định điểm nghẽn nghiêm trọng nhất cần ưu tiên tháo gỡ.</p>
+                </div>
+              </div>
+              <div class="options-vertical-grid">
+                <label class="option-card-btn">
+                  <input type="radio" name="q10" value="10">
+                  <div class="option-vector-icon">
+                    <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/></svg>
+                  </div>
+                  <span>Thiếu báo cáo phân tích tin cậy hỗ trợ quyết định</span>
+                  <div class="option-radio-dot"></div>
+                </label>
+                <label class="option-card-btn">
+                  <input type="radio" name="q10" value="15">
+                  <div class="option-vector-icon">
+                    <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 11v1m0-1c-1.11 0-2.08-.402-2.599-1M12 18v1m-7-5v-4h14v4M5 10v4m14-4v4"/></svg>
+                  </div>
+                  <span>Khó kiểm soát chi phí phát sinh ngoài kế hoạch</span>
+                  <div class="option-radio-dot"></div>
+                </label>
+                <label class="option-card-btn">
+                  <input type="radio" name="q10" value="20">
+                  <div class="option-vector-icon">
+                    <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+                  </div>
+                  <span>Khó theo dõi thời gian thực lộ trình của đơn</span>
+                  <div class="option-radio-dot"></div>
+                </label>
+                <label class="option-card-btn">
+                  <input type="radio" name="q10" value="25">
+                  <div class="option-vector-icon">
+                    <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>
+                  </div>
+                  <span>Điều phối xe thủ công mất nhiều thời gian, sai sót</span>
+                  <div class="option-radio-dot"></div>
+                </label>
+              </div>
+            </div>
+          </div>
+
+          <!-- Submit Bar -->
+          <div class="submit-container-bar">
+            <div class="submit-advice-text">
+              <strong>Smartlog cam kết bảo mật:</strong> Các câu trả lời của doanh nghiệp được lưu giữ an toàn và chỉ dùng để cá nhân hóa báo cáo chẩn đoán này.
+            </div>
+            <button class="btn btn-brand" type="submit">
+              <span>Xem kết quả phân tích</span>
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+            </button>
+          </div>
+
+        </form>
+      </div>
+
+    </div>
+  </section>
+
+</main>
+
+<!-- ============================================================
+     HONEY BADGER LOADER OVERLAY
+     ============================================================ -->
+<section id="loading-overlay">
+  <div class="loader-card-box">
+    <div class="loader-badge-tag">🦡 Smartlog Core Analysis Engine</div>
+    <div class="loader-title-text">Phân Tích Năng Lực Vận Tải</div>
+    <div class="loader-desc-text">Hệ thống đang tổng hợp dữ liệu, quy chuẩn theo benchmark các doanh nghiệp cùng quy mô và xây dựng lộ trình cải tiến...</div>
+    
+    <!-- Circular percentage gauge -->
+    <div class="ring-display-box">
+      <svg class="ring-loader-svg" width="130" height="130" viewBox="0 0 150 150">
+        <circle class="ring-loader-bg" cx="75" cy="75" r="70"/>
+        <circle class="ring-loader-fill" id="loaderArcFill" cx="75" cy="75" r="70"/>
+      </svg>
+      <div class="ring-loader-val" id="loaderValPercent">0%</div>
+    </div>
+    
+    <!-- Delivery truck rolling on a road -->
+    <div class="loader-track-road">
+      <div class="truck-wrapper-node" id="badgerTruck">
+        <svg class="van-svg-illustration" viewBox="0 0 120 70" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="M15 48 H 95 V 22 H 72 L 54 22 L 36 32 H 15 Z" fill="#3543f6"/>
+          <path d="M54 25 L 70 25 L 70 32 L 42 32 Z" fill="#e2e8f0"/>
+          <path d="M20 32 H 35 V 42 H 20 Z" fill="#cbd5e1"/>
+          <!-- Honey Badger Driver inside -->
+          <g class="van-driver-badger">
+            <ellipse cx="61" cy="28" rx="5" ry="6" fill="#1e293b"/>
+            <path d="M59 22 Q 61 19 63 22 L 63 26 Q 61 28 59 26 Z" fill="#ffffff"/>
+            <circle cx="64" cy="26" r="0.8" fill="#ffffff"/>
+            <path d="M56 20 H 64 L 67 23 H 56 Z" fill="#f59e0b"/>
+          </g>
+          <!-- Rotating Wheels -->
+          <circle class="van-wheel" cx="30" cy="50" r="9" fill="#0f172a"/>
+          <circle class="van-wheel" cx="30" cy="50" r="3" fill="#ffffff"/>
+          <circle class="van-wheel" cx="80" cy="50" r="9" fill="#0f172a"/>
+          <circle class="van-wheel" cx="80" cy="50" r="3" fill="#ffffff"/>
+          <path d="M9 44 Q 4 39 7 35" stroke="#94a3b8" stroke-width="2" stroke-linecap="round"/>
+        </svg>
+      </div>
+    </div>
+    
+    <div class="loader-dynamic-phrase" id="loaderPhrase">Bắt đầu khởi động các lớp phân tích...</div>
+  </div>
+</section>
+
+<!-- ============================================================
+     RESULTS DIAGNOSTIC PORTAL
+     ============================================================ -->
+<section id="diagnostic-results" class="container">
+  <div class="results-main-card">
+    
+    <div class="results-header-tag">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+      <span style="margin-left: 5px;">Đo lường hoàn tất</span>
+    </div>
+
+    <!-- Circular Gauge & Title Row -->
+    <div class="results-score-row">
+      <div class="results-score-circle-wrap">
+        <svg class="results-gauge-svg" width="160" height="160" viewBox="0 0 160 160">
+          <circle class="results-gauge-bg" cx="80" cy="80" r="70"/>
+          <circle class="results-gauge-fill" id="resultsGaugeFill" cx="80" cy="80" r="70"/>
+        </svg>
+        <div class="results-score-inner-val">
+          <span class="results-score-val-digit" id="finalCalculatedScore">0</span>
+          <span class="results-score-val-scale">ĐIỂM SỐ SỨC KHỎE</span>
+        </div>
+      </div>
+
+      <div class="results-summary-content">
+        <h2 id="finalDiagnosticTitle">Đang lập báo cáo...</h2>
+        <p id="finalDiagnosticSub">Cảm ơn bạn đã tham gia khảo sát. Báo cáo chẩn đoán năng lực và gợi ý ưu tiên tối ưu hóa đã sẵn sàng bên dưới.</p>
+      </div>
+    </div>
+
+    <!-- Visual Dynamic Rank Badge Card -->
+    <div class="badge-hero-box" id="awardBadgeBox">
+      <div class="badge-vector-artwork" id="awardBadgeArt">
+        <!-- Renders badge icon in SVG based on score -->
+      </div>
+      <div class="badge-details-col">
+        <h3>Xếp hạng mức độ số hóa</h3>
+        <div class="badge-details-name" id="awardBadgeName">Cấp Độ Đang Đánh Giá</div>
+        <div class="badge-details-desc" id="awardBadgeDesc">Chờ tính toán...</div>
+      </div>
+    </div>
+
+    <!-- Pillars breakdown -->
+    <h3 class="pillar-breakdown-heading">Phân tích chi tiết năng lực 3 trụ cột</h3>
+    <div class="pillar-cards-grid">
+      
+      <div class="pillar-card-insight">
+        <div class="pillar-card-head">
+          <div class="pillar-card-icon-box">🚚</div>
+          <h4>Vận Hành & Điều Phối</h4>
+        </div>
+        <p id="advise-pillar-1">Đang tải chẩn đoán...</p>
+      </div>
+
+      <div class="pillar-card-insight">
+        <div class="pillar-card-head">
+          <div class="pillar-card-icon-box">👁️</div>
+          <h4>Hiển Thị & Kiểm Soát</h4>
+        </div>
+        <p id="advise-pillar-2">Đang tải chẩn đoán...</p>
+      </div>
+
+      <div class="pillar-card-insight">
+        <div class="pillar-card-head">
+          <div class="pillar-card-icon-box">📊</div>
+          <h4>Đo Lường & Dữ Liệu</h4>
+        </div>
+        <p id="advise-pillar-3">Đang tải chẩn đoán...</p>
+      </div>
+
+    </div>
+
+    <!-- Blurred curiosity blocks -->
+    <h3 class="curiosity-heading">Chi tiết đo lường chuyên sâu & Lộ trình thực thi</h3>
+    <div class="curiosity-blurred-grid">
+      
+      <!-- Blurred Benchmark Chart -->
+      <div class="curiosity-card">
+        <div class="curiosity-blur-layout">
+          <!-- Real SVG Radar Chart representation to look highly realistic -->
+          <svg width="100%" height="160" viewBox="0 0 200 160" fill="none" style="display: block; margin: 0 auto;">
+            <circle cx="100" cy="80" r="50" stroke="#3543f6" stroke-width="1"/>
+            <circle cx="100" cy="80" r="30" stroke="#3543f6" stroke-width="0.7" stroke-dasharray="2 2"/>
+            <line x1="100" y1="30" x2="100" y2="130" stroke="#3543f6" stroke-width="0.7"/>
+            <line x1="50" y1="80" x2="150" y2="80" stroke="#3543f6" stroke-width="0.7"/>
+            <!-- Radar shape filled -->
+            <polygon points="100,45 130,65 140,80 110,110 75,90" fill="#3543f6" fill-opacity="0.3" stroke="#3543f6" stroke-width="1.5"/>
+            <!-- Dots -->
+            <circle cx="100" cy="45" r="3" fill="#3543f6"/>
+            <circle cx="130" cy="65" r="3" fill="#3543f6"/>
+            <circle cx="140" cy="80" r="3" fill="#3543f6"/>
+            <circle cx="110" cy="110" r="3" fill="#3543f6"/>
+            <circle cx="75" cy="90" r="3" fill="#3543f6"/>
+          </svg>
+          <div style="text-align: center; font-size: 11px; font-weight: 700; margin-top: 5px; color: var(--neutral-dark);">MÔ HÌNH SO SÁNH BENCHMARK NGÀNH VẬN TẢI</div>
+        </div>
+        
+        <!-- Padlock Overlay -->
+        <div class="curiosity-lock-overlay">
+          <div class="curiosity-lock-circle">📈</div>
+          <div class="curiosity-lock-title">Mở khóa Benchmark Ngành</div>
+          <div class="curiosity-lock-desc">Đối chiếu năng lực vận tải số với hơn 150 đơn vị cùng quy mô.</div>
+        </div>
+      </div>
+
+      <!-- Blurred Gantt Timeline -->
+      <div class="curiosity-card">
+        <div class="curiosity-blur-layout">
+          <!-- Real SVG Gantt Timeline representation -->
+          <svg width="100%" height="160" viewBox="0 0 200 160" fill="none" style="display: block; margin: 0 auto;">
+            <!-- Grid lines -->
+            <line x1="30" y1="20" x2="30" y2="140" stroke="#cbd5e1" stroke-width="1"/>
+            <line x1="80" y1="20" x2="80" y2="140" stroke="#cbd5e1" stroke-width="0.7" stroke-dasharray="2 2"/>
+            <line x1="130" y1="20" x2="130" y2="140" stroke="#cbd5e1" stroke-width="0.7" stroke-dasharray="2 2"/>
+            <line x1="180" y1="20" x2="180" y2="140" stroke="#cbd5e1" stroke-width="0.7" stroke-dasharray="2 2"/>
+            <!-- Gantt bar blocks -->
+            <rect x="35" y="30" width="60" height="15" rx="3" fill="#3543f6" fill-opacity="0.4"/>
+            <rect x="75" y="60" width="70" height="15" rx="3" fill="#3543f6" fill-opacity="0.6"/>
+            <rect x="120" y="90" width="55" height="15" rx="3" fill="#3543f6" fill-opacity="0.8"/>
+            <rect x="145" y="120" width="35" height="15" rx="3" fill="#3543f6"/>
+          </svg>
+          <div style="text-align: center; font-size: 11px; font-weight: 700; margin-top: 5px; color: var(--neutral-dark);">LỘ TRÌNH 90 NGÀY TỐI ƯU HÓA CHI PHÍ</div>
+        </div>
+        
+        <!-- Padlock Overlay -->
+        <div class="curiosity-lock-overlay">
+          <div class="curiosity-lock-circle">🗺️</div>
+          <div class="curiosity-lock-title">Mở khóa Lộ Trình 90 Ngày</div>
+          <div class="curiosity-lock-desc">Kế hoạch triển khai công cụ số và đào tạo nhân sự hàng tuần.</div>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- Lead Capture unlock block -->
+    <div class="results-unlock-box">
+      <h3>Bạn mới xem được 30% kết quả phân tích</h3>
+      <p>Điền email công việc và thông tin doanh nghiệp để mở khóa toàn bộ benchmark ngành, biểu đồ radar chi tiết và nhận Lộ trình tối ưu hóa 90 ngày định dạng PDF gửi tự động.</p>
+      
+      <form class="lead-grid-form" id="unlockLeadForm">
+        <div class="lead-form-group">
+          <label for="leadName">Họ và tên *</label>
+          <input type="text" id="leadName" placeholder="Nguyễn Văn A" required>
+        </div>
+        <div class="lead-form-group">
+          <label for="leadEmail">Email công việc *</label>
+          <input type="email" id="leadEmail" placeholder="name@company.com" required>
+        </div>
+        <div class="lead-form-group">
+          <label for="leadPhone">Số điện thoại di động *</label>
+          <input type="tel" id="leadPhone" placeholder="0901234567" required>
+        </div>
+        <div class="lead-form-group">
+          <label for="leadCompany">Tên doanh nghiệp *</label>
+          <input type="text" id="leadCompany" placeholder="Công ty TNHH Logistics Việt" required>
+        </div>
+        
+        <button class="btn btn-brand btn-lead-submit" type="submit">
+          <span>Tải Báo Cáo PDF & Mở Khóa Kết Quả</span>
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+        </button>
+      </form>
+    </div>
+
+  </div>
+</section>
+
+<!-- ============================================================
+     JAVASCRIPT LOGICS & INTERACTIVE CONTROLLERS
+     ============================================================ -->
+<script>
+// DOM Elements
+const healthDiagnosticForm = document.getElementById('healthDiagnosticForm');
+const quizScreen = document.getElementById('quiz-screen');
+const loadingOverlay = document.getElementById('loading-overlay');
+const diagnosticResults = document.getElementById('diagnostic-results');
+
+const liveScorePreview = document.getElementById('live-score-preview');
+const liveBarFill = document.getElementById('live-bar-fill');
+const liveStatusBubble = document.getElementById('live-status-bubble');
+const liveForecastWidget = document.getElementById('live-forecast-widget');
+
+const trackFillLineP1 = document.getElementById('track-fill-line-p1');
+const trackFillLineP2 = document.getElementById('track-fill-line-p2');
+const trackFillLineP3 = document.getElementById('track-fill-line-p3');
+const trackValP1 = document.getElementById('track-val-p1');
+const trackValP2 = document.getElementById('track-val-p2');
+const trackValP3 = document.getElementById('track-val-p3');
+
+const activeGuideTitle = document.getElementById('active-guide-title');
+const activeGuideDesc = document.getElementById('active-guide-desc');
+
+// Loader Elements
+const loaderArcFill = document.getElementById('loaderArcFill');
+const loaderValPercent = document.getElementById('loaderValPercent');
+const badgerTruck = document.getElementById('badgerTruck');
+const loaderPhrase = document.getElementById('loaderPhrase');
+
+// Dashboard Results Elements
+const resultsGaugeFill = document.getElementById('resultsGaugeFill');
+const finalCalculatedScore = document.getElementById('finalCalculatedScore');
+const finalDiagnosticTitle = document.getElementById('finalDiagnosticTitle');
+const finalDiagnosticSub = document.getElementById('finalDiagnosticSub');
+const awardBadgeArt = document.getElementById('awardBadgeArt');
+const awardBadgeName = document.getElementById('awardBadgeName');
+const awardBadgeDesc = document.getElementById('awardBadgeDesc');
+
+const advisePillar1 = document.getElementById('advise-pillar-1');
+const advisePillar2 = document.getElementById('advise-pillar-2');
+const advisePillar3 = document.getElementById('advise-pillar-3');
+
+const confettiCanvasOverlay = document.getElementById('confetti-canvas-overlay');
+
+// Questionnaire configuration parameters
+const totalQuestions = 10;
+const loaderCircumference = 2 * Math.PI * 70; // r=70 -> ~439.8
+const resultsGaugeCircumference = 2 * Math.PI * 70; // r=70 -> ~439.8
+
+// Questionnaire questions mapped to the 3 pillars
+const pillarGroupsMap = {
+  1: ['q1', 'q2', 'q9'],
+  2: ['q3', 'q4', 'q8'],
+  3: ['q5', 'q6', 'q7', 'q10']
+};
+
+const pillarNamesMap = {
+  1: 'Vận Hành & Điều Phối Đội Xe',
+  2: 'Khả Năng Hiển Thị & Kiểm Soát',
+  3: 'Đo Lường & Quản Trị Dữ Liệu'
+};
+
+const pillarDescsMap = {
+  1: 'Tập trung phân tích cơ cấu quy mô phương tiện, phương pháp điều phối xếp chuyến thủ công hay tự động hóa, kiểm soát hao phí chạy xe rỗng tải.',
+  2: 'Đánh giá khả năng giám sát trực quan lộ trình xe GPS thời gian thực, mức độ minh bạch của đơn hàng tới người nhận và KPI chất lượng tài xế.',
+  3: 'Khảo sát tần suất lập báo cáo KPI của nhà quản trị, độ tin cậy của chỉ số OTD đúng hẹn, cấu trúc cơ sở dữ liệu lịch sử và nút thắt vận hành chính.'
+};
+
+// Conversational feedback text messages in correct Vietnamese
+const sidebarQuotePhrases = [
+  'Đã ghi nhận câu trả lời. Tiếp tục hoàn thiện để dự toán điểm số.',
+  'Trụ cột Vận Hành đã cung cấp dữ liệu. Thuật toán bắt đầu tính toán điểm số.',
+  'Đã hoàn thành 50%. Khả năng giám sát và hiển thị đang được đo lường.',
+  'Thông tin rất hữu ích! Hệ số sẵn sàng số hóa vận tải đang tăng trưởng.',
+  'Còn một câu hỏi nữa thôi. Lửng mật Smartlog đang nổ máy xe chuẩn bị khởi chạy!'
+];
+
+// Focus observer on question cards to display the guide information of current active pillar
+const cards = document.querySelectorAll('.question-block-card');
+const scrollObserver = new IntersectionObserver((entries) => {
+  entries.forEach(entry => {
+    if (entry.isIntersecting) {
+      const pId = entry.target.getAttribute('data-pillar');
+      if (pId) {
+        activeGuideTitle.textContent = pillarNamesMap[pId];
+        activeGuideDesc.textContent = pillarDescsMap[pId];
+      }
+    }
+  });
+}, {
+  root: null,
+  rootMargin: '0px 0px -50% 0px',
+  threshold: 0.15
+});
+
+cards.forEach(card => scrollObserver.observe(card));
+
+// Live updates inside form changes
+healthDiagnosticForm.addEventListener('change', () => {
+  const formState = calculateFormState();
+  updateSidebarMetrics(formState);
+});
+
+function calculateFormState() {
+  const selectedList = [...healthDiagnosticForm.querySelectorAll('input[type="radio"]:checked')];
+  const selectedNames = selectedList.map(item => item.name);
+  const scoreAccumulated = selectedList.reduce((sum, item) => sum + Number(item.value), 0);
+
+  // Compute completion percent per pillar
+  const pillarStatusPct = { 1: 0, 2: 0, 3: 0 };
+  Object.keys(pillarGroupsMap).forEach(pId => {
+    const qList = pillarGroupsMap[pId];
+    const completedCount = qList.filter(qName => selectedNames.includes(qName)).length;
+    pillarStatusPct[pId] = Math.round((completedCount / qList.length) * 100);
+  });
+
+  return {
+    totalAnswered: selectedList.length,
+    scoreAccumulated,
+    pillarStatusPct
+  };
+}
+
+function updateSidebarMetrics(state) {
+  // Update score digit
+  liveScorePreview.textContent = state.scoreAccumulated;
+
+  // Set progress fill line width
+  const overallPercentage = (state.scoreAccumulated / 250) * 100;
+  liveBarFill.style.width = `${overallPercentage}%`;
+
+  // Set pillar bars
+  trackValP1.textContent = `${state.pillarStatusPct[1]}%`;
+  trackFillLineP1.style.width = `${state.pillarStatusPct[1]}%`;
+
+  trackValP2.textContent = `${state.pillarStatusPct[2]}%`;
+  trackFillLineP2.style.width = `${state.pillarStatusPct[2]}%`;
+
+  trackValP3.textContent = `${state.pillarStatusPct[3]}%`;
+  trackFillLineP3.style.width = `${state.pillarStatusPct[3]}%`;
+
+  // Visual card outline highlights
+  for (let i = 1; i <= totalQuestions; i++) {
+    const qc = document.getElementById(`card-q${i}`);
+    if (qc) {
+      const inputChecked = healthDiagnosticForm.querySelector(`input[name="q${i}"]:checked`);
+      if (inputChecked) {
+        qc.classList.add('answered');
+      } else {
+        qc.classList.remove('answered');
+      }
+    }
+  }
+
+  // Update status bubble phrase
+  const phraseIndex = Math.min(Math.floor(state.totalAnswered / 2), sidebarQuotePhrases.length - 1);
+  if (state.totalAnswered > 0) {
+    liveStatusBubble.textContent = sidebarQuotePhrases[phraseIndex];
+  } else {
+    liveStatusBubble.textContent = 'Chọn đáp án khảo sát để bắt đầu chẩn đoán sức khỏe vận tải.';
+  }
+}
+
+// Option scaling interaction on select
+healthDiagnosticForm.querySelectorAll('.option-card-btn').forEach(btn => {
+  btn.addEventListener('click', () => {
+    btn.style.transform = 'scale(0.97)';
+    setTimeout(() => { btn.style.transform = ''; }, 80);
+  });
+});
+
+// Submit Diagnostic form
+healthDiagnosticForm.addEventListener('submit', function(e) {
+  e.preventDefault();
+
+  const state = calculateFormState();
+  if (state.totalAnswered < totalQuestions) {
+    // Scroll and shake the first missing question card
+    let firstMissingCard = null;
+    for (let i = 1; i <= totalQuestions; i++) {
+      const isChecked = healthDiagnosticForm.querySelector(`input[name="q${i}"]:checked`);
+      if (!isChecked) {
+        firstMissingCard = document.getElementById(`card-q${i}`);
+        break;
+      }
+    }
+
+    if (firstMissingCard) {
+      firstMissingCard.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      // Shake transition alert
+      firstMissingCard.animate([
+        { transform: 'translateX(0)', boxShadow: '0 0 0 0 rgba(239, 68, 68, 0)' },
+        { transform: 'translateX(-6px)', boxShadow: '0 0 0 4px rgba(239, 68, 68, 0.2)', borderColor: 'var(--danger)' },
+        { transform: 'translateX(6px)', borderColor: 'var(--danger)' },
+        { transform: 'translateX(-4px)', borderColor: 'var(--danger)' },
+        { transform: 'translateX(4px)', borderColor: 'var(--danger)' },
+        { transform: 'translateX(0)', boxShadow: '0 0 0 0 rgba(239, 68, 68, 0)' }
+      ], { duration: 600 });
+    }
+    return;
+  }
+
+  // Show loading loader card
+  quizScreen.style.display = 'none';
+  loadingOverlay.style.display = 'flex';
+  window.scrollTo({ top: 0, behavior: 'instant' });
+
+  // Map final percentage score out of 100
+  const finalDiagnosticPct = Math.round((state.scoreAccumulated / 250) * 100);
+  executeAnalysisAnimation(finalDiagnosticPct);
+});
+
+// Honey Badger Analysis Loading sequence
+function executeAnalysisAnimation(scoreResult) {
+  let progressCount = 0;
+  const analysisPhases = [
+    '🦡 Đang lập chỉ mục thông số điều phối chuyến xe...',
+    '🚚 Đang định lượng tỷ lệ hao phí rỗng tải và tận dụng tải trọng...',
+    '📊 Đang tính toán độ lệch năng lực và kiểm tra định vị GPS...',
+    '⚙️ Đang thiết kế cấu trúc lộ trình số hóa 90 ngày tối ưu...',
+    '🎉 Đang biên dịch kết quả sức khỏe vận tải số...'
+  ];
+  let phaseIndex = 0;
+
+  // Initialize SVG circle arcs
+  loaderArcFill.style.strokeDasharray = loaderCircumference;
+  loaderArcFill.style.strokeDashoffset = loaderCircumference;
+
+  const progressInterval = setInterval(() => {
+    progressCount += 2;
+    loaderValPercent.textContent = `${progressCount}%`;
+
+    const arcOffset = loaderCircumference - (progressCount / 100) * loaderCircumference;
+    loaderArcFill.style.strokeDashoffset = arcOffset;
+
+    // Slide delivery truck along road pathway
+    const roadWidth = document.querySelector('.loader-track-road').offsetWidth;
+    const vanWidth = badgerTruck.offsetWidth || 76;
+    const positionTranslate = Math.max(0, (roadWidth - vanWidth) * (progressCount / 100));
+    badgerTruck.style.transform = `translateX(${positionTranslate}px)`;
+
+    // Seamless fade status labels transitions
+    if (progressCount >= 12 && Math.floor(progressCount / 22) > phaseIndex && phaseIndex < analysisPhases.length) {
+      loaderPhrase.style.opacity = 0;
+      loaderPhrase.style.transform = 'translateY(3px)';
+      setTimeout(() => {
+        loaderPhrase.textContent = analysisPhases[phaseIndex];
+        loaderPhrase.style.opacity = 1;
+        loaderPhrase.style.transform = 'translateY(0)';
+        phaseIndex++;
+      }, 180);
+    }
+
+    if (progressCount >= 100) {
+      clearInterval(progressInterval);
+      setTimeout(() => {
+        renderFinalDiagnosticDashboard(scoreResult);
+      }, 450);
+    }
+  }, 60);
+}
+
+// Render Results Page Portal
+function renderFinalDiagnosticDashboard(scoreResult) {
+  loadingOverlay.style.display = 'none';
+  diagnosticResults.style.display = 'block';
+  window.scrollTo({ top: 0, behavior: 'instant' });
+
+  finalCalculatedScore.textContent = scoreResult;
+
+  let titleText = '';
+  let subText = '';
+  let badgeNameText = '';
+  let badgeDescText = '';
+  let badgeSvgMarkup = '';
+  let brandPrimaryColor = 'var(--primary)';
+
+  // Detailed 3 pillars advisor statements
+  let adviseP1 = '';
+  let adviseP2 = '';
+  let adviseP3 = '';
+
+  if (scoreResult < 45) {
+    brandPrimaryColor = 'var(--warning)';
+    titleText = 'Hoạt động vận tải nhiều lãng phí, cơ hội tối ưu lớn';
+    subText = 'Hoạt động điều phối vận chuyển của doanh nghiệp đang phụ thuộc lớn vào phương thức Excel thủ công, thông tin chưa được lưu giữ hệ thống và thiếu tính giám sát chủ động.';
+    
+    badgeNameText = 'Thám Hiểm Vận Tải (Sơ Khai)';
+    badgeDescText = 'Doanh nghiệp đang quản lý xe rải rác. Có khả năng cắt giảm ngay 15-20% chi phí ẩn nếu chuyển đổi sang cơ chế điều phối ứng dụng phần mềm cơ bản.';
+
+    // Compass Vector Badge Design
+    badgeSvgMarkup = `
+      <svg width="64" height="64" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <circle cx="50" cy="50" r="44" fill="var(--warning-light)" stroke="var(--warning)" stroke-width="2.5"/>
+        <circle cx="50" cy="50" r="34" stroke="var(--warning)" stroke-width="0.8" stroke-dasharray="2 3"/>
+        <path d="M50 20 L 58 42 L 80 50 L 58 58 L 50 80 L 42 58 L 20 50 L 42 42 Z" fill="var(--warning)" fill-opacity="0.15" stroke="var(--warning)" stroke-width="1.8"/>
+        <path d="M50 20 L 50 50 L 58 42 Z" fill="var(--warning)"/>
+        <path d="M50 80 L 50 50 L 42 58 Z" fill="#b45309"/>
+        <circle cx="50" cy="50" r="3" fill="#ffffff"/>
+      </svg>
+    `;
+
+    adviseP1 = 'Thiết lập bảng kế hoạch phân chuyến quy chuẩn để cắt giảm thời gian chết của xe. Số hóa việc điều phối, giảm sự phụ thuộc hoàn toàn vào thói quen của điều phối viên.';
+    adviseP2 = 'Trang bị hệ thống giám sát định vị hành trình xe chạy (GPS), liên kết dữ liệu định vị về một cổng thông tin chung để CS và Sales cập nhật trạng thái nhanh chóng.';
+    adviseP3 = 'Đo lường chỉ số đúng giờ giao nhận (OTD) thủ công hàng tuần để tìm nguyên nhân gốc của trễ chuyến. Lưu lịch sử chứng từ tại một folder chung của kho.';
+
+  } else if (scoreResult < 75) {
+    brandPrimaryColor = '#3543f6';
+    titleText = 'Quy trình đã chuẩn hóa tốt, sẵn sàng để liên thông dữ liệu';
+    subText = 'Doanh nghiệp sở hữu nền tảng công cụ rời rạc ổn định. Việc liên kết luồng dữ liệu điều phối và hiển thị thời gian thực sẽ mở khóa năng suất vượt trội.';
+    
+    badgeNameText = 'Vận Hành Liên Kết (Tiêu Chuẩn)';
+    badgeDescText = 'Có sự hỗ trợ số hóa cơ bản. Đang chuyển dịch sang liên thông tự động. Liên thông dữ liệu đơn hàng và định vị sẽ giúp giảm đến 12% chi phí cơ hội.';
+
+    // Connective Link Vector Badge Design
+    badgeSvgMarkup = `
+      <svg width="64" height="64" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <circle cx="50" cy="50" r="44" fill="var(--primary-light)" stroke="var(--primary)" stroke-width="2.5"/>
+        <path d="M35 50 A 10 10 0 0 1 55 50 A 10 10 0 0 0 75 50" stroke="var(--primary)" stroke-width="4" stroke-linecap="round"/>
+        <circle cx="35" cy="50" r="5" fill="var(--primary)"/>
+        <circle cx="55" cy="50" r="5" fill="#808cff"/>
+        <circle cx="75" cy="50" r="5" fill="var(--primary)"/>
+      </svg>
+    `;
+
+    adviseP1 = 'Áp dụng các thuật toán xếp chuyến thông minh tự động hóa (Auto-planning) nhằm đẩy nhanh tốc độ lập kế hoạch điều động xe lên gấp 2 lần, tăng tải trọng sử dụng.';
+    adviseP2 = 'Liên kết hệ thống định vị GPS trực tiếp với luồng đơn hàng vận chuyển để tự động sinh link cập nhật tiến độ giao nhận chia sẻ với khách mua hàng.';
+    adviseP3 = 'Chuyển đổi các báo cáo tĩnh định kỳ sang BI dashboard động để đo lường KPI tức thời. Đầu tư làm sạch cấu trúc dữ liệu để sẵn sàng khai thác sâu.';
+
+  } else {
+    brandPrimaryColor = 'var(--success)';
+    titleText = 'Năng lực quản lý xuất sắc, sẵn sàng tối ưu cận biên bằng AI';
+    subText = 'Hệ thống vận tải số của bạn đang thuộc nhóm 15% dẫn đầu thị trường. Định hướng tiếp theo là áp dụng thuật toán học máy nâng cao để đưa ra quyết định dự báo sớm.';
+    
+    badgeNameText = 'Nhà Vô Địch Số (Dẫn Đầu)';
+    badgeDescText = 'Mức độ chuyển đổi số tối đa. Kiểm soát sâu bằng dữ liệu realtime. Ứng dụng mô hình tính cước thông minh và phân tích sâu sẽ mở khóa 5-8% chi phí cận biên.';
+
+    // Crown / Plane Vector Badge Design
+    badgeSvgMarkup = `
+      <svg width="64" height="64" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <circle cx="50" cy="50" r="44" fill="var(--success-light)" stroke="var(--success)" stroke-width="2.5"/>
+        <path d="M30 62 L 35 38 L 50 50 L 65 38 L 70 62 Z" fill="var(--success)" fill-opacity="0.15" stroke="var(--success)" stroke-width="2.5" stroke-linejoin="round"/>
+        <circle cx="50" cy="38" r="4" fill="#f59e0b"/>
+        <circle cx="35" cy="38" r="2.5" fill="var(--success)"/>
+        <circle cx="65" cy="38" r="2.5" fill="var(--success)"/>
+        <path d="M30 62 H 70" stroke="var(--success)" stroke-width="3" stroke-linecap="round"/>
+      </svg>
+    `;
+
+    adviseP1 = 'Sử dụng mô hình học máy (Machine Learning) để dự đoán chính xác thời gian dừng đỗ (SLA) tại các kho đối tác hỗ trợ thuật toán lập chuyến hoàn hảo.';
+    adviseP2 = 'Thiết lập Tháp kiểm soát logistics (Logistics Control Tower) cảnh báo rủi ro tắc đường, thời tiết hoặc tài xế lái xe sai làn tự động qua app di động.';
+    adviseP3 = 'Tự động hóa khâu thanh toán đối soát cước phí với các đối tác vận tải bên ngoài (3PL) bằng cơ chế kiểm toán cước thông minh trên hệ thống.';
+  }
+
+  // Update DOM details
+  finalDiagnosticTitle.textContent = titleText;
+  finalDiagnosticSub.textContent = subText;
+  awardBadgeName.textContent = badgeNameText;
+  awardBadgeDesc.textContent = badgeDescText;
+  awardBadgeArt.innerHTML = badgeSvgMarkup;
+
+  advisePillar1.textContent = adviseP1;
+  advisePillar2.textContent = adviseP2;
+  advisePillar3.textContent = adviseP3;
+
+  // Run dynamic score circular gauge animation
+  runResultsGaugeAnimation(scoreResult, brandPrimaryColor);
+
+  // Launch celebration confetti
+  executeConfettiBurst();
+}
+
+function runResultsGaugeAnimation(finalScore, colorTheme) {
+  let counter = 0;
+  const durationTime = 1600; // ms
+  const intervalStep = 25; // ms
+  const steps = durationTime / intervalStep;
+  const increment = finalScore / steps;
+
+  // Configuration of circular arc paths
+  resultsGaugeFill.style.strokeDasharray = resultsGaugeCircumference;
+  resultsGaugeFill.style.strokeDashoffset = resultsGaugeCircumference;
+  resultsGaugeFill.style.stroke = colorTheme;
+  finalCalculatedScore.style.color = colorTheme;
+
+  const timer = setInterval(() => {
+    counter += increment;
+    if (counter >= finalScore) {
+      counter = finalScore;
+      clearInterval(timer);
+    }
+
+    const valueRounded = Math.round(counter);
+    finalCalculatedScore.textContent = valueRounded;
+
+    const offsetVal = resultsGaugeCircumference - (valueRounded / 100) * resultsGaugeCircumference;
+    resultsGaugeFill.style.strokeDashoffset = offsetVal;
+  }, intervalStep);
+}
+
+function executeConfettiBurst() {
+  confettiCanvasOverlay.innerHTML = '';
+  confettiCanvasOverlay.style.display = 'block';
+
+  // Strict Brand Themed Confetti colors
+  const paletteColors = ['#3543f6', '#808cff', '#a5b4fc', '#cbd5e1', '#ffffff'];
+  const piecesQuantity = 80;
+
+  for (let i = 0; i < piecesQuantity; i++) {
+    const piece = document.createElement('span');
+    piece.className = 'confetti-piece';
+
+    const bg = paletteColors[Math.floor(Math.random() * paletteColors.length)];
+    const leftMargin = Math.random() * 100;
+    const animationDelaySec = Math.random() * 0.7;
+    const animationDurationSec = 1.5 + Math.random() * 1.2;
+    const angleRotation = Math.random() * 360;
+    const widthPx = 5 + Math.random() * 5;
+    const heightPx = 10 + Math.random() * 7;
+
+    piece.style.left = `${leftMargin}%`;
+    piece.style.backgroundColor = bg;
+    piece.style.animationDelay = `${animationDelaySec}s`;
+    piece.style.animationDuration = `${animationDurationSec}s`;
+    piece.style.transform = `rotate(${angleRotation}deg)`;
+    piece.style.width = `${widthPx}px`;
+    piece.style.height = `${heightPx}px`;
+
+    confettiCanvasOverlay.appendChild(piece);
+  }
+
+  setTimeout(() => {
+    confettiCanvasOverlay.style.display = 'none';
+  }, 3000);
+}
+
+// Lead submit unlock details
+document.getElementById('unlockLeadForm').addEventListener('submit', (e) => {
+  e.preventDefault();
+  alert('Cảm ơn bạn đã quan tâm! Báo cáo chẩn đoán toàn diện năng lực vận tải, so sánh benchmark ngành và Lộ trình tối ưu hóa 90 ngày dạng PDF đã được lập tự động và đang được gửi tới email công việc của bạn.');
+});
+</script>
+</body>
+</html>
